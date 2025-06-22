@@ -1,0 +1,266 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile - Character Synthesis</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Animate.css -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    
+    <!-- AOS CSS -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{% static 'personalassistant/css/signup.css' %}">
+
+    <style>
+        /* Essential inline styles for the profile page */
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Poppins', sans-serif;
+            background: #0a0a14;
+            color: #ffffff;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+        
+        .profile-title {
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 700;
+            background: linear-gradient(135deg, #8a2be2, #00ffff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem;
+            font-size: 2.5rem;
+        }
+        
+        .profile-container {
+            background: rgba(25, 25, 35, 0.8);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 2.5rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(138, 43, 226, 0.3);
+            margin-top: 100px;
+        }
+        
+        .profile-info {
+            margin-top: 2rem;
+        }
+        
+        .profile-info-item {
+            display: flex;
+            margin-bottom: 1.5rem;
+            align-items: center;
+        }
+        
+        .profile-info-icon {
+            width: 40px;
+            height: 40px;
+            background: rgba(138, 43, 226, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 1rem;
+            color: #8a2be2;
+        }
+        
+        .profile-info-text {
+            flex: 1;
+        }
+        
+        .profile-info-label {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.6);
+            margin-bottom: 0.2rem;
+        }
+        
+        .profile-info-value {
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+        
+        .logout-btn {
+            background: linear-gradient(135deg, #8a2be2, #4b0082);
+            border: none;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 10px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            margin-top: 1.5rem;
+        }
+        
+        .logout-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'personalassistant:home' %}" style="position: relative; display: flex; align-items: center;">
+                <div style="position: relative; overflow: hidden;">
+                    <!-- White Logo Text -->
+                    <span style="font-size: 1.5rem; font-weight: 800; color: #ffffff; letter-spacing: -0.5px; position: relative; z-index: 2; display: flex; align-items: center;">
+                        <span style="position: relative; display: inline-block; overflow: hidden;">
+                            Character
+                        </span>
+                        <span style="display: inline-block; margin: 0 5px; position: relative;">
+                            <i class="fas fa-robot" style="color: #8a2be2; font-size: 1.2rem;"></i>
+                            <span style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle at center, rgba(138, 43, 226, 0.6), transparent 70%); filter: blur(8px); opacity: 0.7;"></span>
+                        </span>
+                        <span style="position: relative; display: inline-block; overflow: hidden;">
+                            Synthesis
+                        </span>
+                    </span>
+                </div>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'personalassistant:home' %}" style="position: relative; color: #ffffff; font-weight: 500; padding: 0.5rem 1rem;">
+                            Home
+                            <span class="nav-hover-effect" style="position: absolute; bottom: 0; left: 10%; width: 0; height: 2px; background: linear-gradient(90deg, transparent, #8a2be2, transparent); transition: width 0.3s ease;"></span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="{% url 'personalassistant:profile' %}" style="position: relative; color: #ffffff; font-weight: 500; padding: 0.5rem 1rem;">
+                            Profile
+                            <span class="nav-hover-effect" style="position: absolute; bottom: 0; left: 10%; width: 80%; height: 2px; background: linear-gradient(90deg, transparent, #8a2be2, transparent); transition: width 0.3s ease;"></span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="btn btn-outline-light ms-2" href="{% url 'personalassistant:logout' %}" style="border-color: #8a2be2; color: #ffffff; background: rgba(138, 43, 226, 0.1); box-shadow: 0 0 10px rgba(138, 43, 226, 0.3);">
+                            Logout
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Profile Container -->
+    <div class="signup-container">
+        <!-- 3D Animated Background Elements -->
+        <div class="background-elements">
+            <div class="blob blob-1"></div>
+            <div class="blob blob-2"></div>
+            <div class="blob blob-3"></div>
+            <div class="grid-overlay"></div>
+            <div class="particles-container">
+                {% for i in "12345678910" %}
+                <div class="particle particle-{{ forloop.counter }}"></div>
+                {% endfor %}
+            </div>
+        </div>
+        
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-md-8">
+                    <div class="profile-container">
+                        {% if messages %}
+                            <div class="messages mb-4">
+                                {% for message in messages %}
+                                    <div class="alert {% if message.tags == 'error' %}alert-danger{% else %}alert-{{ message.tags }}{% endif %} alert-dismissible fade show" role="alert">
+                                        {{ message }}
+                                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                        
+                        <h2 class="profile-title">Your Profile</h2>
+                        
+                        <div class="profile-info">
+                            <div class="profile-info-item">
+                                <div class="profile-info-icon">
+                                    <i class="fas fa-user"></i>
+                                </div>
+                                <div class="profile-info-text">
+                                    <div class="profile-info-label">Username</div>
+                                    <div class="profile-info-value">{{ user.username }}</div>
+                                </div>
+                            </div>
+                            
+                            <div class="profile-info-item">
+                                <div class="profile-info-icon">
+                                    <i class="fas fa-calendar-alt"></i>
+                                </div>
+                                <div class="profile-info-text">
+                                    <div class="profile-info-label">Date Joined</div>
+                                    <div class="profile-info-value">{{ user.date_joined|date:"F j, Y" }}</div>
+                                </div>
+                            </div>
+                            
+                            <div class="profile-info-item">
+                                <div class="profile-info-icon">
+                                    <i class="fas fa-shield-alt"></i>
+                                </div>
+                                <div class="profile-info-text">
+                                    <div class="profile-info-label">Account Type</div>
+                                    <div class="profile-info-value">{% if user.is_superuser %}Administrator{% else %}Standard User{% endif %}</div>
+                                </div>
+                            </div>
+                            
+                            <div class="text-center mt-4">
+                                <a href="{% url 'personalassistant:logout' %}" class="logout-btn">
+                                    <i class="fas fa-sign-out-alt me-2"></i> Logout
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- AOS JS -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    
+    <script>
+        // Initialize AOS
+        AOS.init({
+            duration: 1000,
+            once: true
+        });
+        
+        // Add hover effect to nav links
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('mouseenter', function() {
+                const hoverEffect = this.querySelector('.nav-hover-effect');
+                if (hoverEffect) hoverEffect.style.width = '80%';
+            });
+            
+            link.addEventListener('mouseleave', function() {
+                const hoverEffect = this.querySelector('.nav-hover-effect');
+                if (hoverEffect && !this.classList.contains('active')) hoverEffect.style.width = '0';
+            });
+        });
+    </script>
+</body>
+</html>

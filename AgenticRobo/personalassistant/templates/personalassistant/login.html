@@ -1,0 +1,225 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Character Synthesis</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Animate.css -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    
+    <!-- AOS CSS -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{% static 'personalassistant/css/signup.css' %}">
+
+    <style>
+        /* Essential inline styles for the login page */
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Poppins', sans-serif;
+            background: #0a0a14;
+            color: #ffffff;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+        
+        .login-title {
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 700;
+            background: linear-gradient(135deg, #8a2be2, #00ffff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem;
+            font-size: 2.5rem;
+            text-align: center;
+        }
+        
+        .login-subtitle {
+            color: rgba(255, 255, 255, 0.8);
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .login-form-container {
+            background: rgba(25, 25, 35, 0.8);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 2.5rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            width: 100%;
+            max-width: 450px;
+            border: 1px solid rgba(138, 43, 226, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'personalassistant:home' %}" style="position: relative; display: flex; align-items: center;">
+                <div style="position: relative; overflow: hidden;">
+                    <!-- White Logo Text -->
+                    <span style="font-size: 1.5rem; font-weight: 800; color: #ffffff; letter-spacing: -0.5px; position: relative; z-index: 2; display: flex; align-items: center;">
+                        <span style="position: relative; display: inline-block; overflow: hidden;">
+                            Character
+                        </span>
+                        <span style="display: inline-block; margin: 0 5px; position: relative;">
+                            <i class="fas fa-robot" style="color: #8a2be2; font-size: 1.2rem;"></i>
+                            <span style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle at center, rgba(138, 43, 226, 0.6), transparent 70%); filter: blur(8px); opacity: 0.7;"></span>
+                        </span>
+                        <span style="position: relative; display: inline-block; overflow: hidden;">
+                            Synthesis
+                        </span>
+                    </span>
+                </div>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'personalassistant:home' %}" style="position: relative; color: #ffffff; font-weight: 500; padding: 0.5rem 1rem;">
+                            Home
+                            <span class="nav-hover-effect" style="position: absolute; bottom: 0; left: 10%; width: 0; height: 2px; background: linear-gradient(90deg, transparent, #8a2be2, transparent); transition: width 0.3s ease;"></span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'personalassistant:signup' %}" style="position: relative; color: #ffffff; font-weight: 500; padding: 0.5rem 1rem;">
+                            Sign Up
+                            <span class="nav-hover-effect" style="position: absolute; bottom: 0; left: 10%; width: 0; height: 2px; background: linear-gradient(90deg, transparent, #8a2be2, transparent); transition: width 0.3s ease;"></span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="{% url 'personalassistant:login' %}" style="position: relative; color: #ffffff; font-weight: 500; padding: 0.5rem 1rem;">
+                            Login
+                            <span class="nav-hover-effect" style="position: absolute; bottom: 0; left: 10%; width: 80%; height: 2px; background: linear-gradient(90deg, transparent, #8a2be2, transparent); transition: width 0.3s ease;"></span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Login Container -->
+    <div class="signup-container">
+        <!-- 3D Animated Background Elements -->
+        <div class="background-elements">
+            <div class="blob blob-1"></div>
+            <div class="blob blob-2"></div>
+            <div class="blob blob-3"></div>
+            <div class="grid-overlay"></div>
+            <div class="particles-container">
+                {% for i in "12345678910" %}
+                <div class="particle particle-{{ forloop.counter }}"></div>
+                {% endfor %}
+            </div>
+        </div>
+        
+        <div class="container d-flex justify-content-center align-items-center" style="min-height: 100vh; padding-top: 80px; padding-bottom: 40px;">
+            <div class="login-form-container">
+                <h2 class="login-title">Welcome Back</h2>
+                <p class="login-subtitle">Login to your Character Synthesis account</p>
+                
+                {% if messages %}
+                    <div class="messages mb-4">
+                        {% for message in messages %}
+                            <div class="alert {% if message.tags == 'error' %}alert-danger{% else %}alert-{{ message.tags }}{% endif %} alert-dismissible fade show" role="alert">
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+                
+                <form method="post" class="signup-form">
+                    {% csrf_token %}
+                    
+                    <div class="form-group custom-input-group">
+                        <div class="input-wrapper">
+                            <span class="input-icon"><i class="fas fa-user"></i></span>
+                            <input type="text" name="username" id="id_username" placeholder=" " class="form-input" required>
+                            <label for="id_username" class="floating-label">Username</label>
+                        </div>
+                        {% if form.username.errors %}
+                            <div class="error-message">{{ form.username.errors }}</div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="form-group custom-input-group">
+                        <div class="input-wrapper">
+                            <span class="input-icon"><i class="fas fa-lock"></i></span>
+                            <input type="password" name="password" id="id_password" placeholder=" " class="form-input" required>
+                            <label for="id_password" class="floating-label">Password</label>
+                        </div>
+                        {% if form.password.errors %}
+                            <div class="error-message">{{ form.password.errors }}</div>
+                        {% endif %}
+                    </div>
+
+                    {% if form.non_field_errors %}
+                        <div class="non-field-errors">
+                            {% for error in form.non_field_errors %}
+                                <p class="error-message">{{ error }}</p>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+
+                    <div class="form-actions">
+                        <button type="submit" class="signup-btn">
+                            <span class="btn-text">Login</span>
+                            <span class="btn-glow"></span>
+                        </button>
+                    </div>
+
+                    <div class="form-footer">
+                        <p>Don't have an account? <a href="{% url 'personalassistant:signup' %}" class="login-link">Sign Up</a></p>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- AOS JS -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    
+    <script>
+        // Initialize AOS
+        AOS.init({
+            duration: 1000,
+            once: true
+        });
+        
+        // Add hover effect to nav links
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('mouseenter', function() {
+                const hoverEffect = this.querySelector('.nav-hover-effect');
+                if (hoverEffect) hoverEffect.style.width = '80%';
+            });
+            
+            link.addEventListener('mouseleave', function() {
+                const hoverEffect = this.querySelector('.nav-hover-effect');
+                if (hoverEffect && !this.classList.contains('active')) hoverEffect.style.width = '0';
+            });
+        });
+    </script>
+</body>
+</html>
