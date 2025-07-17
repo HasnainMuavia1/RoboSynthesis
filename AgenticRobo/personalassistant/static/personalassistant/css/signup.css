@@ -1,0 +1,667 @@
+/* Modern 3D AI-themed Signup Page Styles */
+
+:root {
+    --primary-color: #8a2be2;
+    --secondary-color: #00ffff;
+    --accent-color: #ff00ff;
+    --background-color: #0a0a14;
+    --card-bg: rgba(25, 25, 35, 0.8);
+    --text-color: #ffffff;
+    --error-color: #ff4d4d;
+    --success-color: #4dff4d;
+    --primary-glow: rgba(138, 43, 226, 0.6);
+    --secondary-glow: rgba(0, 255, 255, 0.6);
+    --gradient-1: linear-gradient(135deg, #8a2be2, #4b0082);
+    --gradient-2: linear-gradient(135deg, #4b0082, #8a2be2);
+    --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.5);
+    --shadow-sm: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+/* Main Container */
+.signup-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    width: 100%;
+    background: linear-gradient(135deg, var(--background-darker) 0%, #1a1a2e 100%);
+    position: relative;
+    overflow: hidden;
+    perspective: 1000px;
+    padding: 2rem;
+}
+
+/* 3D Background Elements */
+.background-elements {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    overflow: hidden;
+}
+
+.blob {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(60px);
+    opacity: 0.6;
+    z-index: 0;
+    mix-blend-mode: screen;
+}
+
+.blob-1 {
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, var(--primary-color) 0%, rgba(138, 43, 226, 0.2) 50%, transparent 80%);
+    top: -150px;
+    left: -150px;
+    animation: blob-float 20s infinite ease-in-out;
+}
+
+.blob-2 {
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(circle, var(--secondary-color) 0%, rgba(75, 0, 130, 0.3) 60%, transparent 85%);
+    bottom: -120px;
+    right: -120px;
+    animation: blob-float 25s infinite ease-in-out reverse;
+}
+
+.blob-3 {
+    width: 400px;
+    height: 400px;
+    background: radial-gradient(circle, var(--accent-color) 0%, rgba(255, 105, 180, 0.2) 55%, transparent 80%);
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    animation: pulse 12s infinite alternate;
+}
+
+.grid-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: linear-gradient(rgba(138, 43, 226, 0.15) 1px, transparent 1px),
+                      linear-gradient(90deg, rgba(138, 43, 226, 0.15) 1px, transparent 1px);
+    background-size: 25px 25px;
+    z-index: 1;
+    opacity: 0.7;
+    animation: grid-pulse 8s infinite alternate;
+}
+
+@keyframes grid-pulse {
+    0% { opacity: 0.5; background-size: 25px 25px; }
+    50% { opacity: 0.7; background-size: 27px 27px; }
+    100% { opacity: 0.5; background-size: 25px 25px; }
+}
+
+.particles-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+}
+
+.particle {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    background-color: rgba(255, 255, 255, 0.7);
+    border-radius: 50%;
+    box-shadow: 0 0 15px rgba(138, 43, 226, 0.9);
+    z-index: 1;
+    animation: particle-float 15s infinite ease-in-out;
+    opacity: 0;
+    animation-fill-mode: forwards;
+}
+
+.particle::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.8) 0%, transparent 70%);
+    filter: blur(3px);
+    z-index: -1;
+}
+
+/* Particle positions and animations */
+.particle-1 { top: 15%; left: 10%; animation-delay: -2s; animation-duration: 15s; }
+.particle-2 { top: 25%; left: 30%; animation-delay: -5s; animation-duration: 18s; }
+.particle-3 { top: 60%; left: 50%; animation-delay: -8s; animation-duration: 12s; }
+.particle-4 { top: 70%; left: 80%; animation-delay: -1s; animation-duration: 16s; }
+.particle-5 { top: 40%; left: 20%; animation-delay: -7s; animation-duration: 14s; }
+.particle-6 { top: 30%; left: 85%; animation-delay: -3s; animation-duration: 19s; }
+.particle-7 { top: 80%; left: 15%; animation-delay: -6s; animation-duration: 13s; }
+.particle-8 { top: 10%; left: 60%; animation-delay: -9s; animation-duration: 17s; }
+.particle-9 { top: 50%; left: 75%; animation-delay: -4s; animation-duration: 15s; }
+.particle-10 { top: 20%; left: 40%; animation-delay: -2s; animation-duration: 20s; }
+
+/* Main Signup Wrapper */
+.signup-wrapper {
+    display: flex;
+    width: 100%;
+    max-width: 1200px;
+    min-height: 600px;
+    background: rgba(18, 18, 18, 0.7);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5),
+                0 0 0 1px rgba(255, 255, 255, 0.1),
+                0 0 30px rgba(138, 43, 226, 0.3);
+    overflow: hidden;
+    z-index: 10;
+    transform-style: preserve-3d;
+    transform: perspective(1000px);
+    animation: card-appear 1s ease-out forwards;
+}
+
+/* Left side with image */
+.signup-image-container {
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(135deg, rgba(10, 10, 20, 0.8) 0%, rgba(30, 30, 60, 0.8) 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-right: 1px solid rgba(138, 43, 226, 0.3);
+    padding: 2rem;
+}
+
+.image-wrapper {
+    position: relative;
+    width: 80%;
+    height: 80%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transform-style: preserve-3d;
+    animation: float 6s infinite ease-in-out;
+}
+
+.signup-robot {
+    width: 100%;
+    height: auto;
+    max-height: 800px;
+    min-height: 600px;
+    object-fit: contain;
+    filter: drop-shadow(0 0 25px rgba(138, 43, 226, 0.7));
+    transform-style: preserve-3d;
+    transform: translateZ(50px);
+    animation: pulse 3s infinite ease-in-out;
+    z-index: 2;
+    border-radius: 10px;
+    transition: all 0.5s ease;
+    margin: 0 auto;
+}
+
+.glow-effect {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle, var(--primary-glow) 0%, transparent 70%);
+    filter: blur(30px);
+    opacity: 0.7;
+    z-index: 1;
+    animation: glow-pulse 4s infinite alternate;
+    border-radius: 15px;
+}
+
+.image-reflection {
+    position: absolute;
+    bottom: -10%;
+    left: 50%;
+    transform: translateX(-50%) scaleY(-0.2) rotate(180deg);
+    width: 80%;
+    height: 20%;
+    background: linear-gradient(to bottom, rgba(138, 43, 226, 0.3), transparent);
+    filter: blur(10px);
+    opacity: 0.5;
+    border-radius: 50%;
+}
+
+/* Floating elements around the robot */
+.floating-elements {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+}
+
+.floating-circle {
+    position: absolute;
+    border-radius: 50%;
+    border: 2px solid var(--primary-color);
+    opacity: 0.7;
+    box-shadow: 0 0 15px var(--primary-glow);
+}
+
+.circle-1 {
+    width: 50px;
+    height: 50px;
+    top: 20%;
+    right: 10%;
+    animation: float 8s infinite ease-in-out;
+}
+
+.circle-2 {
+    width: 30px;
+    height: 30px;
+    bottom: 30%;
+    left: 15%;
+    border-color: var(--secondary-color);
+    box-shadow: 0 0 15px var(--secondary-glow);
+    animation: float 6s infinite ease-in-out reverse;
+}
+
+.floating-square {
+    position: absolute;
+    width: 40px;
+    height: 40px;
+    bottom: 20%;
+    right: 20%;
+    border: 2px solid var(--secondary-color);
+    box-shadow: 0 0 15px var(--secondary-glow);
+    opacity: 0.7;
+    transform: rotate(45deg);
+    animation: rotate 10s infinite linear;
+}
+
+.floating-triangle {
+    position: absolute;
+    width: 0;
+    height: 0;
+    top: 30%;
+    left: 20%;
+    border-left: 20px solid transparent;
+    border-right: 20px solid transparent;
+    border-bottom: 35px solid var(--primary-color);
+    filter: drop-shadow(0 0 10px var(--primary-glow));
+    opacity: 0.7;
+    animation: float 7s infinite ease-in-out;
+}
+
+/* Right side with form */
+.signup-form-container {
+    flex: 1;
+    padding: 3rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.form-header {
+    margin-bottom: 2.5rem;
+    text-align: center;
+}
+
+.signup-title {
+    position: relative;
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: var(--text-color);
+    margin-bottom: 1.5rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 70px;
+    line-height: 1.2;
+}
+
+.title-layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-shadow: 0 0 10px var(--primary-glow);
+    transform-style: preserve-3d;
+}
+
+.title-layer:nth-child(1) {
+    transform: translateZ(0px);
+    opacity: 0.3;
+}
+
+.title-layer:nth-child(2) {
+    transform: translateZ(5px);
+    opacity: 0.6;
+}
+
+.title-layer:nth-child(3) {
+    transform: translateZ(10px);
+    opacity: 1;
+}
+
+.signup-subtitle {
+    font-size: 1.1rem;
+    color: rgba(255, 255, 255, 0.7);
+    margin-bottom: 0.5rem;
+}
+
+.form-wrapper {
+    width: 100%;
+}
+
+.signup-form {
+    width: 100%;
+}
+
+.form-group {
+    position: relative;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+}
+
+.custom-input-group {
+    position: relative;
+    margin-bottom: 2rem;
+}
+
+.input-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+.input-icon {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 2;
+    color: var(--primary-color);
+    font-size: 1.2rem;
+    transition: all 0.3s ease;
+}
+
+.input-field-wrapper {
+    flex: 1;
+    position: relative;
+}
+
+.signup-form label {
+    position: absolute;
+    left: 15px;
+    top: -10px;
+    background-color: rgba(18, 18, 18, 0.8);
+    padding: 0 8px;
+    font-size: 0.8rem;
+    color: var(--primary-color);
+    z-index: 1;
+    border-radius: 4px;
+}
+
+.form-input {
+    background-color: rgba(20, 20, 40, 0.5);
+    border: 2px solid rgba(138, 43, 226, 0.4);
+    border-radius: 12px;
+    color: var(--text-color);
+    padding: 1.2rem 1.2rem 0.6rem 3.2rem;
+    height: 65px;
+    width: 100%;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3), inset 0 1px 2px rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(5px);
+    font-size: 1.1rem;
+    letter-spacing: 0.5px;
+    outline: none;
+}
+
+.floating-label {
+    position: absolute;
+    left: 3.2rem;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1.1rem;
+    color: rgba(255, 255, 255, 0.6);
+    pointer-events: none;
+    transition: all 0.3s ease;
+}
+
+.form-input:focus + .floating-label,
+.form-input:not(:placeholder-shown) + .floating-label {
+    top: 30%;
+    font-size: 0.8rem;
+    color: var(--primary-color);
+}
+
+.form-input:hover {
+    background-color: rgba(30, 30, 60, 0.6);
+    border: 2px solid rgba(138, 43, 226, 0.6);
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.35), inset 0 1px 3px rgba(255, 255, 255, 0.15);
+}
+
+.form-input:focus {
+    background-color: rgba(40, 40, 80, 0.7);
+    border: 2px solid var(--primary-color);
+    box-shadow: 0 0 25px var(--primary-glow), inset 0 1px 4px rgba(255, 255, 255, 0.25);
+    transform: translateY(-3px);
+}
+
+.form-input:focus ~ .input-icon {
+    color: var(--primary-color);
+    text-shadow: 0 0 10px var(--primary-glow);
+}
+
+.error-message {
+    color: var(--error-color);
+    font-size: 0.8rem;
+    margin-top: 0.5rem;
+    padding-left: 15px;
+}
+
+.non-field-errors {
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    background: rgba(255, 77, 77, 0.1);
+    border-radius: 10px;
+    border: 1px solid rgba(255, 77, 77, 0.3);
+}
+
+.form-actions {
+    margin-top: 2rem;
+    display: flex;
+    justify-content: center;
+}
+
+.btn-signup, .signup-btn {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+    border: none;
+    border-radius: 12px;
+    color: white;
+    padding: 0.85rem 2rem;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+    width: 100%;
+    height: 55px;
+    margin-top: 1.5rem;
+    box-shadow: 0 5px 15px rgba(138, 43, 226, 0.4), inset 0 2px 5px rgba(255, 255, 255, 0.2);
+}
+
+.btn-signup:hover, .signup-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(138, 43, 226, 0.6);
+}
+
+.btn-signup:active, .signup-btn:active {
+    transform: translateY(1px);
+    box-shadow: 0 3px 10px rgba(138, 43, 226, 0.3);
+}
+
+.btn-text {
+    position: relative;
+    z-index: 2;
+}
+
+.btn-glow {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.8) 0%, transparent 70%);
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    z-index: 1;
+    transition: all 0.5s ease;
+}
+
+.form-footer {
+    margin-top: 2rem;
+    text-align: center;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.login-link {
+    color: var(--primary-color);
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.login-link:hover {
+    text-shadow: 0 0 8px var(--primary-glow);
+}
+
+/* Animations */
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-20px);
+    }
+}
+
+@keyframes rotate {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: translateZ(50px) scale(1);
+    }
+    50% {
+        transform: translateZ(50px) scale(1.05);
+    }
+}
+
+@keyframes glow-pulse {
+    0%, 100% {
+        opacity: 0.5;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 0.7;
+        transform: scale(1.1);
+    }
+}
+
+@keyframes particle-float {
+    0%, 100% {
+        transform: translateY(0) translateX(0);
+    }
+    25% {
+        transform: translateY(-20px) translateX(10px);
+    }
+    50% {
+        transform: translateY(0) translateX(20px);
+    }
+    75% {
+        transform: translateY(20px) translateX(10px);
+    }
+}
+
+@keyframes grid-move {
+    0% {
+        background-position: 0 0;
+    }
+    100% {
+        background-position: 30px 30px;
+    }
+}
+
+@keyframes card-appear {
+    0% {
+        opacity: 0;
+        transform: perspective(1000px) translateY(30px) rotateX(-10deg);
+    }
+    100% {
+        opacity: 1;
+        transform: perspective(1000px) translateY(0) rotateX(0);
+    }
+}
+
+/* Responsive styles */
+@media (max-width: 992px) {
+    .signup-wrapper {
+        flex-direction: column;
+        max-width: 600px;
+    }
+    
+    .signup-image-container {
+        height: 300px;
+        border-right: none;
+        border-bottom: 1px solid rgba(138, 43, 226, 0.3);
+    }
+    
+    .signup-form-container {
+        padding: 2rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .signup-container {
+        padding: 1rem;
+    }
+    
+    .signup-title {
+        font-size: 2rem;
+    }
+    
+    .signup-form-container {
+        padding: 1.5rem;
+    }
+    
+    .form-group {
+        flex-direction: column;
+    }
+    
+    .input-icon-wrapper {
+        width: 100%;
+        height: 40px;
+        border-radius: 10px 10px 0 0;
+        border-right: 1px solid var(--input-border);
+        border-bottom: none;
+    }
+    
+    .signup-form input {
+        border-radius: 0 0 10px 10px;
+    }
+}
