@@ -1,0 +1,2291 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agento Assistant</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Animate.css -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    
+    <!-- AOS CSS -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    
+    <!-- Prism CSS for code highlighting -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-okaidia.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/toolbar/prism-toolbar.min.css" rel="stylesheet">
+    
+    <!-- Marked.js for markdown parsing -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    
+    <!-- Three.js for 3D visualization -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    
+    <!-- Prism.js for syntax highlighting -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{% static 'personalassistant/css/signup.css' %}">
+    
+    <style>
+        /* Voice mode styles */
+        .pulse-icon {
+            animation: pulse 1.5s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+        
+        /* Toast notification styles */
+        .toast-notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+            background: rgba(30, 30, 40, 0.9);
+            border-radius: 8px;
+            padding: 12px 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            opacity: 0;
+            transform: translateY(-20px);
+            transition: all 0.3s ease;
+            border-left: 4px solid #8a2be2;
+        }
+        
+        .toast-content {
+            color: #ffffff;
+            font-size: 14px;
+        }
+        
+        .toast-info {
+            border-left-color: #8a2be2;
+        }
+        
+        .toast-error {
+            border-left-color: #e74c3c;
+        }
+        
+        .toast-success {
+            border-left-color: #2ecc71;
+        }
+        
+        /* Speech indicator styles */
+        #speech-indicator {
+            position: fixed;
+            bottom: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(138, 43, 226, 0.2);
+            border: 1px solid rgba(138, 43, 226, 0.4);
+            border-radius: 30px;
+            padding: 8px 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .speech-indicator-content {
+            display: flex;
+            align-items: center;
+            color: #ffffff;
+            font-size: 14px;
+        }
+        
+        /* Code block styling */
+        pre {
+            position: relative;
+            background-color: #282c34;
+            border-radius: 6px;
+            padding: 1rem;
+            margin: 1rem 0;
+            overflow: auto;
+        }
+        
+        pre code {
+            color: #abb2bf;
+            font-family: 'Consolas', 'Monaco', 'Andale Mono', 'Ubuntu Mono', monospace;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            white-space: pre;
+        }
+        
+        .copy-code-button {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border: none;
+            border-radius: 4px;
+            color: #abb2bf;
+            padding: 4px 8px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .copy-code-button:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+            color: #ffffff;
+        }
+    </style>
+    
+    <style>
+        /* Essential inline styles for the Agento Assistant page */
+        html {
+            height: 100%;
+        }
+        
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #0a0a14, #1a1a2e, #16213e, #0a0a14) fixed;
+            background-size: 400% 400%;
+            animation: gradient-bg 15s ease infinite;
+            color: #ffffff;
+            overflow-x: hidden;
+            min-height: 100vh;
+            position: relative;
+        }
+        
+        /* Add a pseudo-element to ensure background covers everything */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: inherit;
+            z-index: -1;
+        }
+        
+        @keyframes gradient-bg {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        /* Responsive styles */
+        @media (max-width: 768px) {
+            .assistant-title {
+                font-size: 2rem;
+            }
+            
+            .assistant-subtitle {
+                font-size: 0.9rem;
+            }
+            
+            .prompt-wrapper {
+                padding: 0.5rem;
+            }
+            
+            .prompt-field {
+                font-size: 0.9rem;
+            }
+            
+            .action-btn {
+                width: 35px;
+                height: 35px;
+            }
+            
+            .chat-message {
+                margin-bottom: 1rem;
+            }
+            
+            .message-content {
+                padding: 0.75rem !important;
+                max-width: 95% !important;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .assistant-title {
+                font-size: 1.75rem;
+            }
+            
+            .container {
+                padding-left: 10px;
+                padding-right: 10px;
+            }
+            
+            #bottomInputContainer {
+                padding: 10px 0;
+            }
+            
+            .prompt-actions {
+                right: 5px;
+            }
+        }
+        
+        .assistant-title {
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 700;
+            background: linear-gradient(135deg, #8a2be2, #00ffff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem;
+            font-size: 2.5rem;
+            text-align: center;
+        }
+        
+        .assistant-subtitle {
+            color: rgba(255, 255, 255, 0.8);
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .prompt-container {
+            background: rgba(25, 25, 35, 0.8);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 2.5rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            width: 100%;
+            max-width: 800px;
+            border: 1px solid rgba(138, 43, 226, 0.3);
+            position: relative;
+            z-index: 10;
+            transform-style: preserve-3d;
+            transform: perspective(1000px);
+            animation: card-appear 1s ease-out forwards;
+        }
+        
+        @keyframes card-appear {
+            0% { opacity: 0; transform: perspective(1000px) translateY(30px); }
+            100% { opacity: 1; transform: perspective(1000px) translateY(0); }
+        }
+        
+        .prompt-wrapper {
+            position: relative;
+            margin-bottom: 1.5rem;
+            border-radius: 15px;
+            padding: 2px; /* Space for the gradient border */
+            background: linear-gradient(90deg, #8a2be2, #00ffff, #ff00ff, #8a2be2);
+            background-size: 300% 300%;
+            animation: gradient-border 8s ease infinite;
+            /* Ensure only the border is animated by using a pseudo-element for the background */
+            position: relative;
+            z-index: 1;
+        }
+        
+        .prompt-wrapper::before {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            right: 2px;
+            bottom: 2px;
+            background: #0a0a14; /* Match the body background */
+            border-radius: 13px;
+            z-index: -1;
+        }
+        
+        @keyframes gradient-border {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        .prompt-field {
+            background: rgba(20, 20, 40, 0.8) !important;
+            border: none !important; /* Remove border as we're using the wrapper for the gradient border */
+            border-radius: 13px !important; /* Slightly smaller than wrapper to show gradient */
+            color: #ffffff !important;
+            padding: 15px 80px 15px 50px !important; /* Extra padding on right for buttons and left for web search */
+            font-size: 1rem !important;
+            transition: all 0.3s ease !important;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2) !important;
+            resize: none !important;
+            min-height: 120px;
+            width: 100%;
+            margin: 0;
+        }
+        
+        .prompt-field:focus {
+            box-shadow: 0 0 15px rgba(138, 43, 226, 0.3) !important;
+            outline: none !important;
+        }
+        
+        .prompt-actions {
+            position: absolute;
+            right: 15px;
+            bottom: 15px;
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+        
+        .chat-messages {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            padding: 0.5rem;
+        }
+        
+        .chat-message {
+            display: flex;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+        
+        .action-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(20, 20, 40, 0.7);
+            border: 1px solid rgba(138, 43, 226, 0.4);
+            color: rgba(255, 255, 255, 0.8);
+            margin-left: 0.5rem;
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+        
+        .action-btn i {
+            transition: all 0.3s ease;
+        }
+        
+        /* Send button animation */
+        .send-btn:hover i {
+            animation: send-animation 0.6s ease;
+        }
+        
+        @keyframes send-animation {
+            0% { transform: scale(1); }
+            50% { transform: scale(0.8) translateX(-5px); }
+            100% { transform: scale(1) translateX(0); }
+        }
+        
+        /* Voice button animation */
+        .voice-btn:hover i {
+            animation: voice-animation 1s infinite;
+        }
+        
+        @keyframes voice-animation {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); opacity: 0.7; }
+            100% { transform: scale(1); }
+        }
+        
+        /* Web search button animation */
+        .web-search-btn:hover i {
+            animation: rotate-animation 0.8s ease;
+        }
+        
+        @keyframes rotate-animation {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .action-btn:hover {
+            background: rgba(138, 43, 226, 0.2);
+            border-color: rgba(138, 43, 226, 0.8);
+            color: #ffffff;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(138, 43, 226, 0.3);
+        }
+        
+        .action-btn:active {
+            transform: translateY(1px) !important;
+            box-shadow: 0 2px 8px rgba(138, 43, 226, 0.2) !important;
+        }
+        
+        .send-btn {
+            background: linear-gradient(135deg, #8a2be2, #9370db) !important;
+            border: none !important;
+        }
+        
+        .send-btn:hover {
+            box-shadow: 0 5px 15px rgba(138, 43, 226, 0.6) !important;
+        }
+        
+        .web-search-btn {
+            position: absolute;
+            bottom: 15px;
+            left: 15px;
+            z-index: 10;
+            width: 35px !important;
+            height: 35px !important;
+            opacity: 0.8;
+        }
+        
+        .web-search-btn:hover {
+            opacity: 1;
+        }
+        
+        .web-search-btn.active {
+            background: rgba(138, 43, 226, 0.6) !important;
+            border-color: rgba(138, 43, 226, 0.8) !important;
+            opacity: 1;
+        }
+        
+        .web-search-btn.active i {
+            color: #ffffff !important;
+        }
+        
+        /* Pulse animation for active web search */
+        @keyframes pulse-glow {
+            0% { box-shadow: 0 0 0 0 rgba(138, 43, 226, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(138, 43, 226, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(138, 43, 226, 0); }
+        }
+        
+        .web-search-btn.active {
+            animation: pulse-glow 2s infinite;
+        }
+        
+        /* Navbar styles */
+        .navbar {
+            background: rgba(10, 10, 20, 0.9);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(138, 43, 226, 0.2);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .nav-link {
+            position: relative;
+            color: #ffffff;
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+        }
+        
+        .nav-hover-effect {
+            position: absolute;
+            bottom: 0;
+            left: 10%;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #8a2be2, transparent);
+            transition: width 0.3s ease;
+        }
+        
+        .nav-link:hover .nav-hover-effect {
+            width: 80%;
+        }
+        
+        .nav-link.active .nav-hover-effect {
+            width: 80%;
+        }
+        
+        /* Spectrograph Overlay Styles */
+        .spectrograph-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 9999;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            transition: all 0.5s ease-in-out;
+            backdrop-filter: blur(10px);
+        }
+        
+        .spectrograph-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .spectrograph {
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+        
+        .spectrograph-controls {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            z-index: 10000;
+        }
+        
+        .close-btn {
+            background: rgba(138, 43, 226, 0.3);
+            border: 1px solid rgba(138, 43, 226, 0.6);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 15px rgba(138, 43, 226, 0.4);
+        }
+        
+        .close-btn:hover {
+            background: rgba(138, 43, 226, 0.5);
+            transform: scale(1.1);
+            box-shadow: 0 0 20px rgba(138, 43, 226, 0.6);
+        }
+        
+        .close-btn:active {
+            transform: scale(0.95);
+        }
+        
+        /* Spectrograph Animation */
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 0.8; }
+            50% { transform: scale(1.05); opacity: 1; }
+            100% { transform: scale(1); opacity: 0.8; }
+        }
+        
+        .sound-wave {
+            animation: pulse 2s infinite ease-in-out;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'personalassistant:dashboard' %}" style="position: relative; display: flex; align-items: center;">
+                <div style="position: relative; overflow: hidden;">
+                    <!-- White Logo Text -->
+                    <span style="font-size: 1.5rem; font-weight: 800; color: #ffffff; letter-spacing: -0.5px; position: relative; z-index: 2; display: flex; align-items: center;">
+                        <span style="position: relative; display: inline-block; overflow: hidden;">
+                            Character
+                        </span>
+                        <span style="display: inline-block; margin: 0 5px; position: relative;">
+                            <i class="fas fa-robot" style="color: #8a2be2; font-size: 1.2rem; position: relative; z-index: 1050;"></i>
+                            <span style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle at center, rgba(138, 43, 226, 0.6), transparent 70%); filter: blur(8px); opacity: 0.7; z-index: 1049;"></span>
+                        </span>
+                        <span style="position: relative; display: inline-block; overflow: hidden;">
+                            Synthesis
+                        </span>
+                    </span>
+                </div>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'personalassistant:dashboard' %}" style="position: relative; color: #ffffff; font-weight: 500; padding: 0.5rem 1rem;">
+                            Dashboard
+                            <span class="nav-hover-effect" style="position: absolute; bottom: 0; left: 10%; width: 0; height: 2px; background: linear-gradient(90deg, transparent, #8a2be2, transparent); transition: width 0.3s ease;"></span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="{% url 'personalassistant:agento_assistant' %}" style="position: relative; color: #ffffff; font-weight: 500; padding: 0.5rem 1rem;">
+                            Agento Assistant
+                            <span class="nav-hover-effect" style="position: absolute; bottom: 0; left: 10%; width: 80%; height: 2px; background: linear-gradient(90deg, transparent, #8a2be2, transparent); transition: width 0.3s ease;"></span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'personalassistant:ai_tutor' %}" style="position: relative; color: #ffffff; font-weight: 500; padding: 0.5rem 1rem;">
+                            AI Tutor
+                            <span class="nav-hover-effect" style="position: absolute; bottom: 0; left: 10%; width: 0; height: 2px; background: linear-gradient(90deg, transparent, #8a2be2, transparent); transition: width 0.3s ease;"></span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'personalassistant:profile' %}" style="position: relative; color: #ffffff; font-weight: 500; padding: 0.5rem 1rem;">
+                            Profile
+                            <span class="nav-hover-effect" style="position: absolute; bottom: 0; left: 10%; width: 0; height: 2px; background: linear-gradient(90deg, transparent, #8a2be2, transparent); transition: width 0.3s ease;"></span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'personalassistant:logout' %}" style="position: relative; color: #ffffff; font-weight: 500; padding: 0.5rem 1rem;">
+                            Logout
+                            <span class="nav-hover-effect" style="position: absolute; bottom: 0; left: 10%; width: 0; height: 2px; background: linear-gradient(90deg, transparent, #8a2be2, transparent); transition: width 0.3s ease;"></span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 3D Animated Background Elements -->
+    <div class="background-elements">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
+        <div class="grid-overlay"></div>
+        <div class="particles-container">
+            {% for i in "12345678910" %}
+            <div class="particle particle-{{ forloop.counter }}"></div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container d-flex flex-column" style="min-height: 100vh; padding-top: 80px; padding-bottom: 40px; position: relative; z-index: 10;">
+        <!-- Initial centered content (will be hidden after first message) -->
+        <div id="initialContent" class="flex-grow-1 d-flex justify-content-center align-items-center">
+            <div data-aos="fade-up" data-aos-duration="1000" style="width: 100%; max-width: 800px;">
+                <h1 class="assistant-title animate__animated animate__fadeIn">Get your work done with us</h1>
+                <p class="assistant-subtitle animate__animated animate__fadeIn animate__delay-1s">Ask anything or give instructions for tasks you need help with</p>
+                
+                <form id="initial-prompt-form" class="animate__animated animate__fadeIn animate__delay-1s">
+                    <div class="prompt-wrapper position-relative">
+                        <textarea class="form-control prompt-field" id="initialPromptField" rows="5" placeholder="Type your prompt here..."></textarea>
+                        
+                        <!-- Web Search Icon (Bottom Left) -->
+                        <button type="button" class="btn action-btn web-search-btn" id="initialWebSearchButton" title="Enable web search">
+                            <i class="fas fa-globe"></i>
+                        </button>
+                        
+                        <div class="prompt-actions">
+                            <!-- Voice Mode Button -->
+                            <button type="button" class="btn action-btn voice-btn" id="initialVoiceButton" title="Voice input">
+                                <i class="fas fa-microphone"></i>
+                            </button>
+                            
+                            <!-- Send Button -->
+                            <button type="submit" class="btn action-btn send-btn">
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <!-- Chat container (initially hidden) -->
+        <div id="chatContainer" class="flex-grow-1 d-none" style="overflow-y: auto; margin-bottom: 120px;">
+            <div class="chat-messages" id="chatMessages">
+                <!-- Chat messages will be added here dynamically -->
+            </div>
+        </div>
+        
+        <!-- Fixed bottom input (initially hidden) -->
+        <div id="bottomInputContainer" class="position-fixed bottom-0 start-0 w-100 d-none" style="background: rgba(10, 10, 20, 0.8); backdrop-filter: blur(10px); padding: 20px 0; z-index: 100;">
+            <div class="container">
+                <form id="bottom-prompt-form">
+                    <div class="prompt-wrapper position-relative">
+                        <textarea class="form-control prompt-field" id="bottomPromptField" rows="2" placeholder="Type your prompt here..."></textarea>
+                        
+                        <!-- Web Search Icon (Bottom Left) -->
+                        <button type="button" class="btn action-btn web-search-btn" id="bottomWebSearchButton" title="Enable web search">
+                            <i class="fas fa-globe"></i>
+                        </button>
+                        
+                        <div class="prompt-actions">
+                            <!-- Voice Mode Button -->
+                            <button type="button" class="btn action-btn voice-btn" id="bottomVoiceButton" title="Voice input">
+                                <i class="fas fa-microphone"></i>
+                            </button>
+                            
+                            <!-- Send Button -->
+                            <button type="submit" class="btn action-btn send-btn">
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    
+    <!-- 3D Spectrograph Overlay -->
+    <div id="spectrographOverlay" class="spectrograph-overlay">
+        <div class="spectrograph-container">
+            <div id="spectrograph" class="spectrograph"></div>
+            <div class="spectrograph-controls">
+                <button id="closeSpectrograph" class="close-btn" aria-label="Close Spectrograph">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+    <script>
+        // Initialize AOS
+        AOS.init({
+            duration: 1000,
+            once: true,
+            mirror: false
+        });
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            // Configure marked.js options
+            marked.setOptions({
+                breaks: true,
+                gfm: true,
+                pedantic: false,
+                sanitize: false,
+                smartLists: true,
+                smartypants: true,
+                xhtml: false
+            });
+            
+            // Function to process code blocks in a message
+            window.processCodeBlocks = function(messageText) {
+                if (!messageText) return '';
+                
+                // First pass: Extract code blocks and replace with placeholders
+                const codeBlocks = [];
+                let processedText = messageText;
+                
+                // More robust regex for code blocks with language specification
+                const codeBlockRegex = /```([\w+-]*)\n?([\s\S]*?)```/g;
+                let match;
+                
+                // Find all code blocks and replace them with placeholders
+                while ((match = codeBlockRegex.exec(messageText)) !== null) {
+                    const fullMatch = match[0];
+                    const lang = match[1] ? match[1].trim() : 'plaintext';
+                    const code = match[2] ? match[2].trim() : '';
+                    
+                    const placeholder = `___CODE_BLOCK_${codeBlocks.length}___`;
+                    codeBlocks.push({
+                        placeholder: placeholder,
+                        language: lang,
+                        code: code
+                    });
+                    
+                    // Replace the code block with a placeholder
+                    processedText = processedText.replace(fullMatch, placeholder);
+                }
+                
+                // Apply markdown to the text with placeholders
+                let html;
+                try {
+                    html = marked(processedText);
+                } catch (e) {
+                    console.error('Error applying markdown:', e);
+                    html = processedText;
+                }
+                
+                // Replace placeholders with code blocks
+                codeBlocks.forEach(block => {
+                    // Create HTML for code block with proper syntax highlighting classes
+                    let codeHtml;
+                    
+                    // Escape HTML characters in the code
+                    const escapedCode = block.code
+                        .replace(/&/g, '&amp;')
+                        .replace(/</g, '&lt;')
+                        .replace(/>/g, '&gt;')
+                        .replace(/"/g, '&quot;')
+                        .replace(/'/g, '&#039;');
+                    
+                    // Use Prism for syntax highlighting if available
+                    if (typeof Prism !== 'undefined' && Prism.languages[block.language]) {
+                        try {
+                            const highlightedCode = Prism.highlight(escapedCode, Prism.languages[block.language], block.language);
+                            codeHtml = `<pre class="code-block"><code class="language-${block.language}">${highlightedCode}</code></pre>`;
+                        } catch (e) {
+                            console.error('Error highlighting code:', e);
+                            codeHtml = `<pre class="code-block"><code class="language-${block.language}">${escapedCode}</code></pre>`;
+                        }
+                    } else {
+                        // Fallback if Prism is not available or language not supported
+                        codeHtml = `<pre class="code-block"><code class="language-${block.language}">${escapedCode}</code></pre>`;
+                    }
+                    
+                    // Replace the placeholder with the code block
+                    // Use regex to ensure exact match and avoid partial replacements
+                    const escapedPlaceholder = block.placeholder.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                    const placeholderRegex = new RegExp(escapedPlaceholder, 'g');
+                    html = html.replace(placeholderRegex, codeHtml);
+                });
+                
+                return html;
+            };
+                
+            // Function to add copy buttons to code blocks
+            
+            // Function to add copy buttons to code blocks
+            window.addCopyButtonsToCodeBlocks = function(element) {
+                element.querySelectorAll('pre code').forEach(codeBlock => {
+                    if (!codeBlock.parentElement.querySelector('.copy-code-button')) {
+                        const copyButton = document.createElement('button');
+                        copyButton.className = 'copy-code-button';
+                        copyButton.innerHTML = '<i class="fas fa-copy"></i>';
+                        copyButton.title = 'Copy code';
+                        copyButton.addEventListener('click', function() {
+                            navigator.clipboard.writeText(codeBlock.textContent).then(() => {
+                                copyButton.innerHTML = '<i class="fas fa-check"></i>';
+                                setTimeout(() => {
+                                    copyButton.innerHTML = '<i class="fas fa-copy"></i>';
+                                }, 2000);
+                            });
+                        });
+                        codeBlock.parentElement.appendChild(copyButton);
+                    }
+                });
+                
+                // Highlight code blocks with Prism
+                if (typeof Prism !== 'undefined') {
+                    Prism.highlightAllUnder(element);
+                }
+            };
+            
+            // Get DOM elements
+            const initialContent = document.getElementById('initialContent');
+            const chatContainer = document.getElementById('chatContainer');
+            const bottomInputContainer = document.getElementById('bottomInputContainer');
+            const chatMessages = document.getElementById('chatMessages');
+            
+            // Initial form elements
+            const initialPromptForm = document.getElementById('initial-prompt-form');
+            const initialPromptField = document.getElementById('initialPromptField');
+            const initialVoiceButton = document.getElementById('initialVoiceButton');
+            const initialWebSearchButton = document.getElementById('initialWebSearchButton');
+            
+            // Bottom form elements
+            const bottomPromptForm = document.getElementById('bottom-prompt-form');
+            const bottomPromptField = document.getElementById('bottomPromptField');
+            const bottomVoiceButton = document.getElementById('bottomVoiceButton');
+            const bottomWebSearchButton = document.getElementById('bottomWebSearchButton');
+            
+            // Web search toggle state (shared between both forms)
+            let webSearchEnabled = false;
+            
+            // Animate navbar links on hover
+            const navLinks = document.querySelectorAll('.nav-link');
+            navLinks.forEach(link => {
+                link.addEventListener('mouseenter', function() {
+                    if (!this.classList.contains('active')) {
+                        this.querySelector('.nav-hover-effect').style.width = '80%';
+                    }
+                });
+                
+                link.addEventListener('mouseleave', function() {
+                    if (!this.classList.contains('active')) {
+                        this.querySelector('.nav-hover-effect').style.width = '0';
+                    }
+                });
+            });
+            
+            // Process any existing messages on page load
+            function processExistingMessages() {
+                const chatMessages = document.getElementById('chatMessages');
+                if (chatMessages) {
+                    // Find all bot message content divs
+                    const botMessages = chatMessages.querySelectorAll('.message-text');
+                    
+                    botMessages.forEach(messageElement => {
+                        // Get the original content
+                        const originalContent = messageElement.innerHTML;
+                        
+                        // Skip if it's just a typing indicator
+                        if (originalContent.includes('typing-indicator')) return;
+                        
+                        try {
+                            // Process the content
+                            const formattedContent = window.processCodeBlocks(originalContent);
+                            
+                            // Update the content
+                            messageElement.innerHTML = formattedContent;
+                            
+                            // Add copy buttons and apply syntax highlighting
+                            window.addCopyButtonsToCodeBlocks(messageElement);
+                        } catch (error) {
+                            console.error('Error processing existing message:', error);
+                        }
+                    });
+                }
+            }
+            
+            // Call the function to process existing messages
+            setTimeout(processExistingMessages, 500);
+            
+            // Animate background blobs
+            function animateBlobs() {
+                const blobs = document.querySelectorAll('.blob');
+                blobs.forEach((blob, index) => {
+                    const randomX = Math.random() * 10 - 5;
+                    const randomY = Math.random() * 10 - 5;
+                    const randomScale = 0.95 + Math.random() * 0.1;
+                    const duration = 5 + Math.random() * 5;
+                    
+                    blob.style.transition = `transform ${duration}s ease-in-out`;
+                    blob.style.transform = `translate(${randomX}px, ${randomY}px) scale(${randomScale})`;
+                });
+                
+                setTimeout(animateBlobs, 5000);
+            }
+            
+            animateBlobs();
+            
+            // Function to toggle web search state
+            function toggleWebSearch(button) {
+                webSearchEnabled = !webSearchEnabled;
+                
+                // Update both buttons to reflect the same state
+                [initialWebSearchButton, bottomWebSearchButton].forEach(btn => {
+                    btn.classList.toggle('active', webSearchEnabled);
+                    
+                    if (webSearchEnabled) {
+                        btn.setAttribute('title', 'Web search enabled');
+                        btn.classList.add('animate__animated', 'animate__pulse');
+                        setTimeout(() => {
+                            btn.classList.remove('animate__animated', 'animate__pulse');
+                        }, 1000);
+                    } else {
+                        btn.setAttribute('title', 'Enable web search');
+                    }
+                });
+            }
+            
+            // Handle web search button clicks
+            initialWebSearchButton.addEventListener('click', function() {
+                toggleWebSearch(this);
+            });
+            
+            bottomWebSearchButton.addEventListener('click', function() {
+                toggleWebSearch(this);
+            });
+            
+            // Function to handle message submission (used by both forms)
+            function handleMessageSubmission(message, button, isVoiceInput = false) {
+                if (message.trim()) {
+                    // Show a loading animation
+                    const originalContent = button.innerHTML;
+                    button.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>';
+                    button.disabled = true;
+                    
+                    // Switch from initial centered view to chat view if this is the first message
+                    if (initialContent.classList.contains('d-flex') || !initialContent.style.display || initialContent.style.display !== 'none') {
+                        // Properly hide the initial content
+                        initialContent.style.display = 'none';
+                        initialContent.classList.remove('d-flex');
+                        initialContent.classList.add('d-none');
+                        
+                        // Show the chat container and bottom input
+                        chatContainer.classList.remove('d-none');
+                        chatContainer.style.display = 'block';
+                        bottomInputContainer.classList.remove('d-none');
+                        bottomInputContainer.style.display = 'block';
+                    }
+                    
+                    // Add user message to chat
+                    addMessageToChat('user', message);
+                    
+                    // Process the message based on whether web search is enabled
+                    if (webSearchEnabled) {
+                        console.log('Web search enabled, calling Tavily API');
+                        
+                        // Create a bot message container first with web search loading indicator
+                        const messageId = 'msg-' + Date.now();
+                        const botMessage = document.createElement('div');
+                        botMessage.className = 'chat-message assistant';
+                        botMessage.innerHTML = `
+                            <div class="message-content bot p-3" style="background: linear-gradient(135deg, rgba(25, 25, 35, 0.9), rgba(40, 40, 60, 0.9)); border-radius: 15px 15px 15px 0; max-width: 90%; box-shadow: 0 3px 15px rgba(0,0,0,0.3); backdrop-filter: blur(10px); border: 1px solid rgba(138, 43, 226, 0.2);">
+                                <div id="${messageId}" class="message-text">
+                                    <div class="web-search-indicator">
+                                        <div class="d-flex align-items-center">
+                                            <div class="spinner-border spinner-border-sm text-light me-2" role="status">
+                                                <span class="visually-hidden">Loading...</span>
+                                            </div>
+                                            <span style="color: #e0e0e0;">Searching the web for information...</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                        chatMessages.appendChild(botMessage);
+                        chatMessages.scrollTop = chatMessages.scrollHeight;
+                        
+                        // Call Tavily search API
+                        fetch('/api/tavily-search/', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRFToken': getCookie('csrftoken')
+                            },
+                            body: JSON.stringify({ query: message })
+                        })
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error(`Server responded with status ${response.status}`);
+                            }
+                            return response.json();
+                        })
+                        .then(data => {
+                            console.log('Tavily search results:', data);
+                            // Reset button
+                            button.innerHTML = originalContent;
+                            button.disabled = false;
+                            
+                            // Remove the loading indicator message
+                            const loadingIndicator = chatMessages.querySelector('.assistant:last-child');
+                            if (loadingIndicator) {
+                                chatMessages.removeChild(loadingIndicator);
+                            }
+                            
+                            // Process and display search results
+                            processSearchResults(data);
+                        })
+                        .catch(error => {
+                            console.error('Error with web search:', error);
+                            // Reset button
+                            button.innerHTML = originalContent;
+                            button.disabled = false;
+                            
+                            // Show error message
+                            addMessageToChat('bot', 'Sorry, there was an error with the web search. Please try again.');
+                        });
+                    } else {
+                        // Regular assistant response (without web search)
+                        console.log('Regular message (no web search)');
+                        
+                        // Create a bot message container first with loading indicator
+                        const messageId = 'msg-' + Date.now();
+                        const botMessage = document.createElement('div');
+                        botMessage.className = 'chat-message assistant';
+                        botMessage.innerHTML = `
+                            <div class="message-content bot p-3" style="background: linear-gradient(135deg, rgba(25, 25, 35, 0.9), rgba(40, 40, 60, 0.9)); border-radius: 15px 15px 15px 0; max-width: 90%; box-shadow: 0 3px 15px rgba(0,0,0,0.3); backdrop-filter: blur(10px); border: 1px solid rgba(138, 43, 226, 0.2);">
+                                <div id="${messageId}" class="message-text">
+                                    <div class="typing-indicator">
+                                        <span></span>
+                                        <span></span>
+                                        <span></span>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                        chatMessages.appendChild(botMessage);
+                        chatMessages.scrollTop = chatMessages.scrollHeight;
+                        
+                        // Check if we should use streaming or non-streaming
+                        const useStreaming = true; // Set to true to use streaming, false for non-streaming
+                        
+                        if (useStreaming) {
+                            // STREAMING APPROACH
+                            console.log('Using streaming response');
+                            
+                            // Create an EventSource for server-sent events
+                            const eventSource = new EventSource(`/api/message/?message=${encodeURIComponent(message)}`);
+                            let fullMessage = '';
+                            
+                            // Handle streaming chunks
+                            eventSource.onmessage = function(event) {
+                                try {
+                                    const data = JSON.parse(event.data);
+                                    console.log('Stream event:', data);
+                                    
+                                    if (data.status === 'start') {
+                                        console.log('Stream started');
+                                        // Remove typing indicator when we start receiving content
+                                        document.getElementById(messageId).innerHTML = '';
+                                    } else if (data.status === 'done') {
+                                        console.log('Stream ended');
+                                        eventSource.close();
+                                        
+                                        // Render the full accumulated message now that it is complete
+                                        try {
+                                            const messageElement = document.getElementById(messageId);
+                                            console.log('Processing complete message');
+                                            
+                                            // Process code blocks with our robust handler
+                                            const formattedContent = window.processCodeBlocks(fullMessage);
+                                            
+                                            // Update the DOM with formatted content
+                                            messageElement.innerHTML = formattedContent;
+                                            
+                                            // Add copy buttons to code blocks
+                                            window.addCopyButtonsToCodeBlocks(messageElement);
+                                            
+                                            // Force Prism to highlight all code blocks
+                                            setTimeout(() => {
+                                                if (typeof Prism !== 'undefined') {
+                                                    console.log('Applying Prism highlighting');
+                                                    try {
+                                                        Prism.highlightAllUnder(messageElement);
+                                                    } catch (e) {
+                                                        console.error('Prism highlighting error:', e);
+                                                        // Fallback to global highlighting
+                                                        Prism.highlightAll();
+                                                    }
+                                                }
+                                            }, 100); // Slightly longer timeout to ensure DOM is ready
+                                            
+                                            // Scroll to the bottom
+                                            scrollToBottom();
+                                            
+                                            // If voice mode is active, convert response to speech
+                                            if (voiceModeActive) {
+                                                // Extract plain text from the formatted content (remove HTML tags)
+                                                const tempDiv = document.createElement('div');
+                                                tempDiv.innerHTML = fullMessage;
+                                                const plainText = tempDiv.textContent || tempDiv.innerText || '';
+                                                
+                                                // Small delay to ensure the response is fully rendered before speaking
+                                                setTimeout(() => {
+                                                    // Speak the response
+                                                    speakText(plainText);
+                                                }, 500);
+                                            }
+                                        } catch(e){
+                                            console.error('Formatting error:', e);
+                                            document.getElementById(messageId).innerText = fullMessage;
+                                        }
+                                        
+                                        // Reset button
+                                        button.innerHTML = originalContent;
+                                        button.disabled = false
+                                    } else if (data.status === 'error') {
+                                        console.error('Error from server:', data.message);
+                                        eventSource.close();
+                                        
+                                        // Display the error message
+                                        document.getElementById(messageId).innerHTML = `<div class="text-danger">Error: ${data.message}</div>`;
+                                        chatMessages.scrollTop = chatMessages.scrollHeight;
+                                        
+                                        // Reset button
+                                        button.innerHTML = originalContent;
+                                        button.disabled = false;
+                                    } else if (data.content) {
+                                        // Append content to the message
+                                        fullMessage += data.content;
+                                        
+                                        // During streaming, just show the raw text without formatting
+                                        // This prevents the disappearing markdown issue
+                                        const messageElement = document.getElementById(messageId);
+                                        
+                                        // Use a simple text display during streaming
+                                        // We'll format it properly when the stream is complete
+                                        messageElement.innerText = fullMessage;
+                                        
+                                        // Auto-scroll to bottom
+                                        chatMessages.scrollTop = chatMessages.scrollHeight;
+                                        
+                                        // If voice mode is active, process this chunk for TTS
+                                        if (voiceModeActive) {
+                                            // Process the new chunk for TTS
+                                            processTextChunkForTTS(data.content);
+                                        }
+                                    }
+                                } catch (e) {
+                                    console.error('Error parsing SSE message:', e);
+                                    eventSource.close();
+                                    
+                                    // Display error message
+                                    document.getElementById(messageId).innerHTML = 'Error parsing server response. Please try again.';
+                                    
+                                    // Reset button
+                                    button.innerHTML = originalContent;
+                                    button.disabled = false;
+                                }
+                            };
+                            
+                            // Handle errors
+                            eventSource.onerror = function() {
+                                console.error('EventSource error');
+                                eventSource.close();
+                                
+                                // Reset button
+                                button.innerHTML = originalContent;
+                                button.disabled = false;
+                                
+                                // Show error message if nothing has been displayed
+                                if (!fullMessage) {
+                                    document.getElementById(messageId).innerHTML = 'Connection to server failed. Please try again.';
+                                }
+                            };
+
+                        } else {
+                            // NON-STREAMING APPROACH
+                            console.log('Using non-streaming response');
+                            
+                            // Handle non-streaming response
+                            fetch('/api/message/', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'X-CSRFToken': getCookie('csrftoken')
+                                },
+                                body: JSON.stringify({
+                                    message: message,
+                                    use_streaming: false
+                                })
+                            })
+                            .then(response => response.json())
+                            .then(data => {
+                                // Reset button
+                                button.innerHTML = originalContent;
+                                button.disabled = false;
+                                
+                                if (data.error) {
+                                    console.error('Error:', data.error);
+                                    document.getElementById(messageId).innerText = 'Error: ' + data.error;
+                                    return;
+                                }
+                                
+                                // Process the response
+                                try {
+                                    const messageElement = document.getElementById(messageId);
+                                    
+                                    // Process code blocks with our robust handler
+                                    const formattedContent = window.processCodeBlocks(data.response || data.content || '');
+                                    messageElement.innerHTML = formattedContent;
+                                    
+                                    // Add copy buttons to code blocks
+                                    window.addCopyButtonsToCodeBlocks(messageElement);
+                                    
+                                    // Force Prism to highlight all code blocks
+                                    setTimeout(() => {
+                                        if (typeof Prism !== 'undefined') {
+                                            console.log('Applying Prism highlighting to non-streaming response');
+                                            try {
+                                                Prism.highlightAllUnder(messageElement);
+                                            } catch (e) {
+                                                console.error('Prism highlighting error:', e);
+                                                // Fallback to global highlighting
+                                                Prism.highlightAll();
+                                            }
+                                        }
+                                    }, 100); // Slightly longer timeout to ensure DOM is ready
+                                    
+                                    // Scroll to the bottom
+                                    scrollToBottom();
+                                } catch (e) {
+                                    console.error('Error formatting response:', e);
+                                    const content = data.response || data.content || 'No response received';
+                                    document.getElementById(messageId).innerText = content;
+                                }
+                            })
+                            .catch(error => {
+                                console.error('API error:', error);
+                                
+                                // Reset button
+                                button.innerHTML = originalContent;
+                                button.disabled = false;
+                                
+                                // Show error message
+                                document.getElementById(messageId).innerHTML = 'Sorry, there was an error processing your message. Please try again.';
+                            });
+                        }
+                    }
+                    
+                    return true;
+                }
+                return false;
+            }
+            
+            // Handle initial form submission
+            initialPromptForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const message = initialPromptField.value;
+                const sendBtn = this.querySelector('.send-btn');
+                
+                if (handleMessageSubmission(message, sendBtn)) {
+                    initialPromptField.value = '';
+                    // Focus on bottom input field after transition
+                    setTimeout(() => bottomPromptField.focus(), 300);
+                }
+            });
+            
+            // Handle bottom form submission
+            bottomPromptForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const message = bottomPromptField.value;
+                const sendBtn = this.querySelector('.send-btn');
+                
+                if (handleMessageSubmission(message, sendBtn)) {
+                    bottomPromptField.value = '';
+                }
+            });
+            
+            // Handle Enter key press in input fields
+            initialPromptField.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    const message = initialPromptField.value;
+                    const sendBtn = initialPromptForm.querySelector('.send-btn');
+                    
+                    if (handleMessageSubmission(message, sendBtn)) {
+                        initialPromptField.value = '';
+                        // Focus on bottom input field after transition
+                        setTimeout(() => bottomPromptField.focus(), 300);
+                    }
+                }
+            });
+            
+            bottomPromptField.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    const message = bottomPromptField.value;
+                    const sendBtn = bottomPromptForm.querySelector('.send-btn');
+                    
+                    if (handleMessageSubmission(message, sendBtn)) {
+                        bottomPromptField.value = '';
+                    }
+                }
+            });
+            
+            // Voice mode state variables
+            let voiceModeActive = false;
+            let mediaRecorder = null;
+            let audioChunks = [];
+            let isRecording = false;
+            
+            // Variables for streaming TTS
+            let ttsQueue = [];
+            let isSpeaking = false;
+            let lastSentenceBreak = 0;
+            let accumulatedText = '';
+            let audioContext = null;
+            
+            // Function to initialize audio context
+            function initAudioContext() {
+                if (!audioContext) {
+                    try {
+                        window.AudioContext = window.AudioContext || window.webkitAudioContext;
+                        audioContext = new AudioContext();
+                        console.log('AudioContext initialized');
+                    } catch (e) {
+                        console.error('Web Audio API not supported:', e);
+                    }
+                }
+            }
+            
+            // Function to convert text to speech using IBM Watson
+            function speakText(text) {
+                console.log('Converting full text to speech with Watson TTS');
+                
+                // Strip markdown and HTML tags to get clean text
+                let cleanText = text.replace(/\*\*(.*?)\*\*/g, '$1'); // Remove bold markdown
+                cleanText = cleanText.replace(/\*(.*?)\*/g, '$1');     // Remove italic markdown
+                cleanText = cleanText.replace(/\[([^\]]+)\]\([^)]+\)/g, '$1'); // Remove links
+                cleanText = cleanText.replace(/```[\s\S]*?```/g, 'Code block omitted for speech.'); // Replace code blocks
+                cleanText = cleanText.replace(/<[^>]*>/g, '');  // Remove HTML tags
+                
+                // Limit text length if needed
+                if (cleanText.length > 5000) {
+                    cleanText = cleanText.substring(0, 5000) + '... The rest of the message is omitted for speech.';
+                }
+                
+                // Send the text to Watson TTS endpoint
+                fetch('/api/watson/text-to-speech/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCookie('csrftoken')
+                    },
+                    body: JSON.stringify({ text: cleanText })
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`Server responded with status ${response.status}`);
+                    }
+                    return response.blob();
+                })
+                .then(audioBlob => {
+                    // Create audio element and play the speech
+                    const audioUrl = URL.createObjectURL(audioBlob);
+                    const audio = new Audio(audioUrl);
+                    audio.play();
+                    
+                    // Log success
+                    console.log('Playing TTS audio');
+                })
+                .catch(error => {
+                    console.error('Error with Watson TTS:', error);
+                    showToast('Error playing audio response', 'error');
+                });
+            }
+            
+            // Function to process text chunk for streaming TTS
+            function processTextChunkForTTS(chunk) {
+                if (!voiceModeActive) return; // Only process if voice mode is active
+                
+                // Initialize audio context if needed
+                initAudioContext();
+                
+                // Clean the chunk text
+                let cleanChunk = chunk.replace(/\*\*(.*?)\*\*/g, '$1'); // Remove bold markdown
+                cleanChunk = cleanChunk.replace(/\*(.*?)\*/g, '$1');     // Remove italic markdown
+                cleanChunk = cleanChunk.replace(/\[([^\]]+)\]\([^)]+\)/g, '$1'); // Remove links
+                cleanChunk = cleanChunk.replace(/```[\s\S]*?```/g, ''); // Remove code blocks
+                cleanChunk = cleanChunk.replace(/<[^>]*>/g, '');  // Remove HTML tags
+                
+                // Add to accumulated text
+                accumulatedText += cleanChunk;
+                
+                // Check if we have enough text to send for TTS (sentence or phrase)
+                const sentenceBreaks = ['.', '!', '?', ':', ';', '\n'];
+                let shouldSendChunk = false;
+                
+                // Look for sentence breaks in the accumulated text
+                for (let i = lastSentenceBreak; i < accumulatedText.length; i++) {
+                    if (sentenceBreaks.includes(accumulatedText[i])) {
+                        // Found a sentence break, send everything up to this point
+                        const textToSend = accumulatedText.substring(0, i + 1).trim();
+                        if (textToSend.length > 0) {
+                            sendChunkToTTS(textToSend);
+                            // Keep the rest for next time
+                            accumulatedText = accumulatedText.substring(i + 1);
+                            lastSentenceBreak = 0;
+                            shouldSendChunk = true;
+                            break;
+                        }
+                    }
+                }
+                
+                // If we've accumulated a lot of text without sentence breaks, send it anyway
+                if (!shouldSendChunk && accumulatedText.length > 100) {
+                    sendChunkToTTS(accumulatedText);
+                    accumulatedText = '';
+                    lastSentenceBreak = 0;
+                }
+            }
+            
+            // Function to send a chunk of text to TTS and play it
+            function sendChunkToTTS(text) {
+                if (!text || text.trim().length === 0) return;
+                
+                console.log('Sending chunk to TTS:', text);
+                
+                // Add to queue
+                ttsQueue.push(text);
+                
+                // Start processing queue if not already speaking
+                if (!isSpeaking) {
+                    processNextTTSChunk();
+                }
+            }
+            
+            // Process the next TTS chunk in the queue
+            function processNextTTSChunk() {
+                if (ttsQueue.length === 0) {
+                    isSpeaking = false;
+                    return;
+                }
+                
+                isSpeaking = true;
+                const text = ttsQueue.shift();
+                
+                // Send the text to Watson TTS endpoint
+                fetch('/api/watson/text-to-speech/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCookie('csrftoken')
+                    },
+                    body: JSON.stringify({ text: text })
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`Server responded with status ${response.status}`);
+                    }
+                    return response.blob();
+                })
+                .then(audioBlob => {
+                    // Create audio element
+                    const audioUrl = URL.createObjectURL(audioBlob);
+                    const audio = new Audio(audioUrl);
+                    
+                    // When this audio finishes, process the next chunk
+                    audio.onended = function() {
+                        processNextTTSChunk();
+                    };
+                    
+                    // Play the audio
+                    audio.play().catch(e => {
+                        console.error('Error playing audio:', e);
+                        // Move to next chunk if there's an error
+                        processNextTTSChunk();
+                    });
+                })
+                .catch(error => {
+                    console.error('Error with Watson TTS:', error);
+                    // Continue with next chunk even if there's an error
+                    processNextTTSChunk();
+                });
+            }
+            
+            // Reset TTS state when starting a new conversation
+            function resetTTSState() {
+                ttsQueue = [];
+                isSpeaking = false;
+                lastSentenceBreak = 0;
+                accumulatedText = '';
+            }
+
+            // Handle voice button clicks
+            initialVoiceButton.addEventListener('click', handleVoiceInput);
+            bottomVoiceButton.addEventListener('click', handleVoiceInput);
+            
+            // Function to handle voice input
+            function handleVoiceInput() {
+                // Toggle voice mode
+                voiceModeActive = !voiceModeActive;
+                
+                // Update button appearance
+                [initialVoiceButton, bottomVoiceButton].forEach(btn => {
+                    if (voiceModeActive) {
+                        btn.classList.add('active');
+                        btn.style.background = 'linear-gradient(135deg, #8a2be2, #9370db)';
+                        btn.setAttribute('title', 'Stop voice input');
+                    } else {
+                        btn.classList.remove('active');
+                        btn.style.background = '';
+                        btn.setAttribute('title', 'Voice input');
+                    }
+                });
+                
+                if (voiceModeActive) {
+                    // Start speech recognition
+                    startSpeechRecognition();
+                    
+                    // Show a toast notification
+                    showToast('Voice mode activated. Speak now...', 'info');
+                } else {
+                    // If media recorder is active, stop it
+                    if (mediaRecorder && mediaRecorder.state === 'recording') {
+                        mediaRecorder.stop();
+                    }
+                    
+                    // Remove any speech indicator
+                    const speechIndicator = document.getElementById('speech-indicator');
+                    if (speechIndicator) {
+                        document.body.removeChild(speechIndicator);
+                    }
+                    
+                    showToast('Voice mode deactivated', 'info');
+                }
+            }
+            
+            function startSpeechRecognition() {
+                // Check browser support for MediaRecorder
+                if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia || !window.MediaRecorder) {
+                    showToast('Media recording is not supported in this browser.', 'error');
+                    return;
+                }
+                
+                // Create a temporary message to show transcription in progress
+                const transcriptionId = 'transcription-' + Date.now();
+                const transcriptionMsg = document.createElement('div');
+                transcriptionMsg.className = 'chat-message user';
+                transcriptionMsg.innerHTML = `
+                    <div class="message-content user p-3" style="background: linear-gradient(135deg, rgba(138, 43, 226, 0.2), rgba(100, 30, 200, 0.3)); border-radius: 15px 15px 0 15px; margin-left: auto; max-width: 90%; box-shadow: 0 3px 15px rgba(0,0,0,0.2); backdrop-filter: blur(10px); border: 1px solid rgba(138, 43, 226, 0.2);">
+                        <div id="${transcriptionId}" class="message-text">
+                            <i class="fas fa-microphone-alt me-2 pulse-icon"></i>
+                            <span class="transcription-text">Listening...</span>
+                        </div>
+                    </div>
+                `;
+                
+                // Only add the transcription message if chat is visible
+                if (chatContainer.style.display === 'block') {
+                    chatMessages.appendChild(transcriptionMsg);
+                    chatMessages.scrollTop = chatMessages.scrollHeight;
+                }
+                
+                // Request microphone access
+                navigator.mediaDevices.getUserMedia({ audio: true })
+                    .then(stream => {
+                        // Initialize MediaRecorder
+                        audioChunks = [];
+                        mediaRecorder = new MediaRecorder(stream);
+                        
+                        // Handle data available event
+                        mediaRecorder.ondataavailable = function(event) {
+                            audioChunks.push(event.data);
+                        };
+                        
+                        // Handle recording stop event
+                        mediaRecorder.onstop = function() {
+                            // Create a blob from the audio chunks
+                            const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+                            
+                            // Send the audio to IBM Watson Speech-to-Text service
+                            sendAudioToWatson(audioBlob, transcriptionId);
+                            
+                            // Stop all tracks in the stream to release the microphone
+                            stream.getTracks().forEach(track => track.stop());
+                        };
+                        
+                        // Start recording
+                        mediaRecorder.start();
+                        
+                        // Automatically stop recording after 10 seconds if still active
+                        setTimeout(() => {
+                            if (mediaRecorder && mediaRecorder.state === 'recording' && voiceModeActive) {
+                                mediaRecorder.stop();
+                            }
+                        }, 10000);
+                        
+                        // Update the transcription message to show recording status
+                        const transcriptionElement = document.getElementById(transcriptionId);
+                        if (transcriptionElement) {
+                            transcriptionElement.innerHTML = `
+                                <i class="fas fa-microphone-alt me-2 pulse-icon"></i>
+                                <span class="transcription-text">Recording... (speak now)</span>
+                            `;
+                        }
+                        
+                        // Show toast notification
+                        showToast('Recording started. Speak now...', 'info');
+                    })
+                    .catch(error => {
+                        console.error('Error accessing microphone:', error);
+                        
+                        // Remove the temporary transcription message
+                        const transcriptionElement = document.getElementById(transcriptionId);
+                        if (transcriptionElement) {
+                            const parentMessage = transcriptionElement.closest('.chat-message');
+                            if (parentMessage) {
+                                chatMessages.removeChild(parentMessage);
+                            }
+                        }
+                        
+                        // Show error message
+                        showToast(`Microphone access error: ${error.message}`, 'error');
+                        
+                        // Deactivate voice mode
+                        voiceModeActive = false;
+                        [initialVoiceButton, bottomVoiceButton].forEach(btn => {
+                            btn.classList.remove('active');
+                            btn.style.background = '';
+                            btn.setAttribute('title', 'Voice input');
+                        });
+                    });
+            }
+            
+            function sendAudioToWatson(audioBlob, transcriptionId) {
+                // Create a FormData object to send the audio file
+                const formData = new FormData();
+                formData.append('audio', audioBlob, 'recording.webm');
+                
+                // Send the audio to the backend
+                fetch('/api/watson/speech-to-text/', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': getCookie('csrftoken'),
+                        'Content-Type': 'audio/webm'
+                    },
+                    body: audioBlob
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`Server responded with status ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Watson STT response:', data);
+                    
+                    // Get the transcription
+                    const transcription = data.transcription;
+                    
+                    // Remove the temporary transcription message
+                    const transcriptionElement = document.getElementById(transcriptionId);
+                    if (transcriptionElement) {
+                        const parentMessage = transcriptionElement.closest('.chat-message');
+                        if (parentMessage) {
+                            chatMessages.removeChild(parentMessage);
+                        }
+                    }
+                    
+                    // If we have a valid transcription, send it to the backend
+                    if (transcription && transcription.trim()) {
+                        // Process the message with the LLM - don't add a message here as handleMessageSubmission will do it
+                        const sendBtn = bottomPromptForm.querySelector('.send-btn');
+                        handleMessageSubmission(transcription, sendBtn, false);
+                    } else {
+                        // If no valid transcription, restart listening if voice mode is still active
+                        if (voiceModeActive) {
+                            showToast('No speech detected. Please try again.', 'info');
+                            setTimeout(startSpeechRecognition, 1000);
+                        }
+                    }
+                })
+                .catch(error => {
+                    console.error('Error with Watson STT:', error);
+                    
+                    // Remove the temporary transcription message
+                    const transcriptionElement = document.getElementById(transcriptionId);
+                    if (transcriptionElement) {
+                        const parentMessage = transcriptionElement.closest('.chat-message');
+                        if (parentMessage) {
+                            chatMessages.removeChild(parentMessage);
+                        }
+                    }
+                    
+                    // Show error message
+                    showToast(`Speech-to-Text error: ${error.message}`, 'error');
+                    
+                    // Restart if voice mode is still active
+                    if (voiceModeActive) {
+                        setTimeout(startSpeechRecognition, 2000);
+                    }
+                });
+            }
+            
+            // Toast notification function
+            function showToast(message, type = 'info') {
+                const toast = document.createElement('div');
+                toast.className = `toast-notification toast-${type}`;
+                toast.innerHTML = `<div class="toast-content">${message}</div>`;
+                document.body.appendChild(toast);
+                
+                // Animate in
+                setTimeout(() => {
+                    toast.style.opacity = '1';
+                    toast.style.transform = 'translateY(0)';
+                }, 10);
+                
+                // Remove after delay
+                setTimeout(() => {
+                    toast.style.opacity = '0';
+                    toast.style.transform = 'translateY(-20px)';
+                    setTimeout(() => document.body.removeChild(toast), 300);
+                }, 3000);
+            }
+            
+            // Text-to-speech function using IBM Watson TTS service
+            function speakText(text) {
+                // Prepare the text for speech
+                // Clean up the text - remove markdown, code blocks, etc.
+                let cleanText = text
+                    .replace(/```[\s\S]*?```/g, 'Code block omitted') // Replace code blocks
+                    .replace(/`([^`]+)`/g, '$1') // Remove inline code formatting
+                    .replace(/\*\*([^\*]+)\*\*/g, '$1') // Remove bold formatting
+                    .replace(/\*([^\*]+)\*/g, '$1') // Remove italic formatting
+                    .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1') // Replace markdown links with just the text
+                    .replace(/#{1,6}\s+([^\n]+)/g, '$1') // Remove heading markers
+                    .replace(/\n\s*[-*+]\s+/g, '. ') // Convert bullet points to sentences
+                    .replace(/\n/g, ' ') // Replace newlines with spaces
+                    .replace(/\s+/g, ' ') // Normalize whitespace
+                    .trim();
+                
+                // Break into smaller chunks if text is too long (max ~1000 chars per chunk for Watson TTS)
+                const maxChunkLength = 1000;
+                const textChunks = [];
+                
+                // Split by sentences to create natural breaks
+                const sentences = cleanText.split(/(?<=[.!?])\s+/);
+                let currentChunk = '';
+                
+                sentences.forEach(sentence => {
+                    // If adding this sentence would make the chunk too long, start a new chunk
+                    if (currentChunk.length + sentence.length > maxChunkLength && currentChunk.length > 0) {
+                        textChunks.push(currentChunk.trim());
+                        currentChunk = '';
+                    }
+                    currentChunk += sentence + ' ';
+                });
+                
+                // Add the last chunk if it has content
+                if (currentChunk.trim().length > 0) {
+                    textChunks.push(currentChunk.trim());
+                }
+                
+                // Create a visual indicator that speech is happening
+                const speechIndicator = document.createElement('div');
+                speechIndicator.id = 'speech-indicator';
+                speechIndicator.style.position = 'fixed';
+                speechIndicator.style.bottom = '20px';
+                speechIndicator.style.left = '50%';
+                speechIndicator.style.transform = 'translateX(-50%)';
+                speechIndicator.style.padding = '10px 20px';
+                speechIndicator.style.backgroundColor = 'rgba(138, 43, 226, 0.8)';
+                speechIndicator.style.color = 'white';
+                speechIndicator.style.borderRadius = '20px';
+                speechIndicator.style.zIndex = '1000';
+                speechIndicator.style.boxShadow = '0 3px 15px rgba(0,0,0,0.3)';
+                speechIndicator.innerHTML = `
+                    <div class="speech-indicator-content">
+                        <i class="fas fa-volume-up me-2 pulse-icon"></i>
+                        <span>Speaking...</span>
+                    </div>
+                `;
+                document.body.appendChild(speechIndicator);
+                
+                // Function to speak each chunk sequentially using Watson TTS
+                let chunkIndex = 0;
+                function speakNextChunk() {
+                    // If we've spoken all chunks or voice mode was turned off, stop
+                    if (chunkIndex >= textChunks.length || !voiceModeActive) {
+                        // Remove the speech indicator
+                        if (document.getElementById('speech-indicator')) {
+                            document.body.removeChild(document.getElementById('speech-indicator'));
+                        }
+                        
+                        // If voice mode is still active, restart speech recognition
+                        if (voiceModeActive) {
+                            setTimeout(startSpeechRecognition, 1000);
+                        }
+                        return;
+                    }
+                    
+                    // Send the current chunk to Watson TTS
+                    fetch('/api/watson/text-to-speech/', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': getCookie('csrftoken')
+                        },
+                        body: JSON.stringify({
+                            text: textChunks[chunkIndex],
+                            voice: 'en-US_AllisonV3Voice' // You can change this to any Watson voice
+                        })
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(`Server responded with status ${response.status}`);
+                        }
+                        return response.blob();
+                    })
+                    .then(audioBlob => {
+                        // Create an audio element to play the speech
+                        const audioUrl = URL.createObjectURL(audioBlob);
+                        const audio = new Audio(audioUrl);
+                        
+                        // When this chunk is done playing, speak the next one
+                        audio.onended = function() {
+                            // Revoke the object URL to free up memory
+                            URL.revokeObjectURL(audioUrl);
+                            
+                            // Speak the next chunk
+                            chunkIndex++;
+                            speakNextChunk();
+                        };
+                        
+                        // Handle errors
+                        audio.onerror = function(error) {
+                            console.error('Audio playback error:', error);
+                            URL.revokeObjectURL(audioUrl);
+                            
+                            // Try to continue with the next chunk
+                            chunkIndex++;
+                            speakNextChunk();
+                        };
+                        
+                        // Play the audio
+                        audio.play().catch(error => {
+                            console.error('Audio play error:', error);
+                            URL.revokeObjectURL(audioUrl);
+                            
+                            // Try to continue with the next chunk
+                            chunkIndex++;
+                            speakNextChunk();
+                        });
+                    })
+                    .catch(error => {
+                        console.error('Watson TTS error:', error);
+                        showToast(`Text-to-Speech error: ${error.message}`, 'error');
+                        
+                        // Try to continue with the next chunk
+                        chunkIndex++;
+                        speakNextChunk();
+                    });
+                }
+                
+                // Start speaking the first chunk
+                speakNextChunk();
+            }
+            
+            // Function to add message to chat
+            function addMessageToChat(role, content, searchData) {
+                const messageElement = document.createElement('div');
+                messageElement.className = `chat-message ${role === 'user' ? 'user' : 'assistant'}`;
+                
+                if (role === 'user') {
+                    messageElement.innerHTML = `
+                        <div class="message-content user p-3" style="background: linear-gradient(135deg, rgba(138, 43, 226, 0.2), rgba(100, 30, 200, 0.3)); border-radius: 15px 15px 0 15px; margin-left: auto; max-width: 90%; box-shadow: 0 3px 15px rgba(0,0,0,0.2); backdrop-filter: blur(10px); border: 1px solid rgba(138, 43, 226, 0.2);">
+                            <div class="message-text">${content}</div>
+                        </div>
+                    `;
+                } else if (searchData) {
+                    // Create a bot message with search results
+                    const messageId = 'msg-' + Date.now();
+                    messageElement.innerHTML = `
+                        <div class="message-content bot p-3" style="background: linear-gradient(135deg, rgba(25, 25, 35, 0.9), rgba(40, 40, 60, 0.9)); border-radius: 15px 15px 15px 0; max-width: 90%; box-shadow: 0 3px 15px rgba(0,0,0,0.3); backdrop-filter: blur(10px); border: 1px solid rgba(138, 43, 226, 0.2);">
+                            <div id="${messageId}" class="message-text">
+                                <div class="search-answer mb-3" style="color: #ffffff; font-size: 1rem; font-weight: 400;">${content}</div>
+                                <div class="search-results-container"></div>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    // Create a standard bot message
+                    const messageId = 'msg-' + Date.now();
+                    messageElement.innerHTML = `
+                        <div class="message-content bot p-3" style="background: linear-gradient(135deg, rgba(25, 25, 35, 0.9), rgba(40, 40, 60, 0.9)); border-radius: 15px 15px 15px 0; max-width: 90%; box-shadow: 0 3px 15px rgba(0,0,0,0.3); backdrop-filter: blur(10px); border: 1px solid rgba(138, 43, 226, 0.2);">
+                            <div id="${messageId}" class="message-text">${content}</div>
+                        </div>
+                    `;
+                }
+                
+                chatMessages.appendChild(messageElement);
+                
+                // If we have search data, add the search results to the message
+                if (searchData && searchData.results) {
+                    const searchResultsContainer = messageElement.querySelector('.search-results-container');
+                    
+                    // Add a divider between answer and results
+                    const divider = document.createElement('div');
+                    divider.className = 'search-divider';
+                    divider.style.cssText = 'height: 1px; background: linear-gradient(to right, rgba(138, 43, 226, 0.2), rgba(255, 255, 255, 0.3), rgba(138, 43, 226, 0.2)); margin: 15px 0;';
+                    searchResultsContainer.appendChild(divider);
+                    
+                    // Add search results
+                    if (searchData.results && searchData.results.length > 0) {
+                        const resultsList = document.createElement('div');
+                        resultsList.className = 'search-results-list mt-3';
+                        
+                        // Add a heading for search results
+                        const resultsHeading = document.createElement('div');
+                        resultsHeading.className = 'search-results-heading mb-2';
+                        resultsHeading.style.cssText = 'color: #ffffff; font-size: 0.9rem; font-weight: 600; letter-spacing: 0.5px;';
+                        resultsHeading.textContent = 'Search Results';
+                        resultsList.appendChild(resultsHeading);
+                        
+                        searchData.results.forEach((result, index) => {
+                            const resultItem = document.createElement('div');
+                            resultItem.className = 'search-result-item mb-3';
+                            resultItem.style.cssText = 'background: rgba(255, 255, 255, 0.05); border-radius: 8px; padding: 12px; border-left: 3px solid rgba(138, 43, 226, 0.6);';
+                            
+                            resultItem.innerHTML = `
+                                <div class="result-title mb-1"><a href="${result.url}" target="_blank" style="color: #9e7cff; font-weight: 500; text-decoration: none; font-size: 0.95rem;">${result.title}</a></div>
+                                <div class="result-content" style="color: #e0e0e0; font-size: 0.85rem;">${result.content}</div>
+                                <div class="result-url" style="color: #8a8a9a; font-size: 0.75rem; margin-top: 5px;">${result.url}</div>
+                            `;
+                            resultsList.appendChild(resultItem);
+                        });
+                        
+                        searchResultsContainer.appendChild(resultsList);
+                    }
+                    
+                    // Add images if available
+                    if (searchData.images && searchData.images.length > 0) {
+                        const imagesContainer = document.createElement('div');
+                        imagesContainer.className = 'search-images-container mt-4';
+                        
+                        // Add a heading for images
+                        const imagesHeading = document.createElement('div');
+                        imagesHeading.className = 'search-images-heading mb-2';
+                        imagesHeading.style.cssText = 'color: #ffffff; font-size: 0.9rem; font-weight: 600; letter-spacing: 0.5px;';
+                        imagesHeading.textContent = 'Related Images';
+                        imagesContainer.appendChild(imagesHeading);
+                        
+                        // Create a flex container for images
+                        const imageFlexContainer = document.createElement('div');
+                        imageFlexContainer.style.cssText = 'display: flex; flex-wrap: wrap; gap: 10px; justify-content: flex-start;';
+                        
+                        searchData.images.forEach((imageUrl, index) => {
+                            if (index < 4) { // Limit to 4 images
+                                const imageWrapper = document.createElement('div');
+                                imageWrapper.className = 'search-image-wrapper';
+                                imageWrapper.style.cssText = 'position: relative; overflow: hidden; border-radius: 8px; box-shadow: 0 3px 10px rgba(0,0,0,0.2); transition: transform 0.3s ease;';
+                                
+                                // Add hover effect
+                                imageWrapper.onmouseover = function() { this.style.transform = 'scale(1.03)'; };
+                                imageWrapper.onmouseout = function() { this.style.transform = 'scale(1)'; };
+                                
+                                // Create a link to open the image in a new tab
+                                const imageLink = document.createElement('a');
+                                imageLink.href = imageUrl;
+                                imageLink.target = '_blank';
+                                imageLink.style.cssText = 'display: block;';
+                                
+                                // Add the image with error handling
+                                imageLink.innerHTML = `
+                                    <img src="${imageUrl}" alt="Search result image" 
+                                         class="search-result-image" 
+                                         style="width: 150px; height: 120px; object-fit: cover; display: block;" 
+                                         onerror="this.onerror=null; this.src='https://via.placeholder.com/150x120?text=Image+Unavailable'; this.style.opacity=0.7;">
+                                `;
+                                
+                                imageWrapper.appendChild(imageLink);
+                                imageFlexContainer.appendChild(imageWrapper);
+                            }
+                        });
+                        
+                        imagesContainer.appendChild(imageFlexContainer);
+                        searchResultsContainer.appendChild(imagesContainer);
+                    }
+                }
+                
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+            
+            // Function to process and display search results
+            function processSearchResults(data) {
+                if (data.error) {
+                    addMessageToChat('bot', `Sorry, there was an error with the web search: ${data.error}`);
+                    return;
+                }
+                
+                console.log('Processing search results:', data);
+                
+                // Create a response message based on the search results
+                let responseMessage = '';
+                
+                if (data.answer) {
+                    responseMessage = data.answer;
+                } else if (data.results && data.results.length > 0) {
+                    responseMessage = 'Here are some search results that might help:';
+                } else {
+                    responseMessage = 'I couldn\'t find specific information about that. Please try a different search query.';
+                }
+                
+                // Add the bot message with search results
+                // Pass the full data object as the third parameter
+                addMessageToChat('bot', responseMessage, data);
+            }
+            
+            // Add focus to the initial prompt field when the page loads
+            initialPromptField.focus();
+            
+            // 3D Spectrograph related functions
+            let spectrographScene, spectrographCamera, spectrographRenderer;
+            let spectrographMesh, spectrographAnalyser, spectrographDataArray;
+            let animationFrameId = null;
+            
+            // Initialize the 3D spectrograph
+            function initializeSpectrograph() {
+                if (animationFrameId) {
+                    cancelAnimationFrame(animationFrameId);
+                    animationFrameId = null;
+                }
+                
+                const container = document.getElementById('spectrograph');
+                
+                // Clear any previous content
+                while (container.firstChild) {
+                    container.removeChild(container.firstChild);
+                }
+                
+                // Set up the scene
+                spectrographScene = new THREE.Scene();
+                spectrographScene.background = new THREE.Color(0x000000);
+                
+                // Create camera
+                spectrographCamera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+                spectrographCamera.position.z = 100;
+                
+                // Create renderer
+                spectrographRenderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+                spectrographRenderer.setSize(window.innerWidth, window.innerHeight);
+                container.appendChild(spectrographRenderer.domElement);
+                
+                // Add ambient light
+                const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+                spectrographScene.add(ambientLight);
+                
+                // Add point light
+                const pointLight = new THREE.PointLight(0x8a2be2, 1, 1000);
+                pointLight.position.set(0, 0, 50);
+                spectrographScene.add(pointLight);
+                
+                // Create sphere geometry for visualization
+                const geometry = new THREE.SphereGeometry(30, 32, 32);
+                
+                // Create material with vertex displacement
+                const material = new THREE.MeshPhongMaterial({
+                    color: 0x8a2be2,
+                    wireframe: true,
+                    emissive: 0x8a2be2,
+                    emissiveIntensity: 0.5,
+                    side: THREE.DoubleSide,
+                    transparent: true,
+                    opacity: 0.8
+                });
+                
+                // Create mesh
+                spectrographMesh = new THREE.Mesh(geometry, material);
+                spectrographScene.add(spectrographMesh);
+                
+                // Create audio context and analyser
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                spectrographAnalyser = audioContext.createAnalyser();
+                spectrographAnalyser.fftSize = 256;
+                const bufferLength = spectrographAnalyser.frequencyBinCount;
+                spectrographDataArray = new Uint8Array(bufferLength);
+                
+                // Create oscillator for demo animation
+                const oscillator = audioContext.createOscillator();
+                oscillator.type = 'sine';
+                oscillator.frequency.setValueAtTime(440, audioContext.currentTime); // A4 note
+                
+                const gainNode = audioContext.createGain();
+                gainNode.gain.value = 0.5;
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(spectrographAnalyser);
+                oscillator.start();
+                
+                // Animate the spectrograph
+                animateSpectrograph();
+                
+                // Handle window resize
+                window.addEventListener('resize', onSpectrographResize);
+                
+                // Handle close button
+                document.getElementById('closeSpectrograph').addEventListener('click', closeSpectrograph);
+            }
+            
+            // Animate the spectrograph
+            function animateSpectrograph() {
+                animationFrameId = requestAnimationFrame(animateSpectrograph);
+                
+                // Get frequency data
+                spectrographAnalyser.getByteFrequencyData(spectrographDataArray);
+                
+                // Update vertices based on audio data
+                const vertices = spectrographMesh.geometry.attributes.position;
+                
+                for (let i = 0; i < vertices.count; i++) {
+                    const x = vertices.getX(i);
+                    const y = vertices.getY(i);
+                    const z = vertices.getZ(i);
+                    
+                    const distance = Math.sqrt(x * x + y * y + z * z);
+                    const originalDistance = 30; // Original sphere radius
+                    const ratio = distance / originalDistance;
+                    
+                    // Get frequency value closest to this vertex
+                    const frequencyIndex = Math.floor(i % spectrographDataArray.length);
+                    const frequency = spectrographDataArray[frequencyIndex] / 255; // Normalize to 0-1
+                    
+                    // Scale displacement based on frequency
+                    const displacement = 10 * frequency;
+                    
+                    // Apply displacement in direction of vertex
+                    const newX = x * (1 + displacement * ratio * 0.05);
+                    const newY = y * (1 + displacement * ratio * 0.05);
+                    const newZ = z * (1 + displacement * ratio * 0.05);
+                    
+                    vertices.setXYZ(i, newX, newY, newZ);
+                }
+                
+                vertices.needsUpdate = true;
+                
+                // Rotate the mesh
+                spectrographMesh.rotation.x += 0.002;
+                spectrographMesh.rotation.y += 0.003;
+                
+                // Render the scene
+                spectrographRenderer.render(spectrographScene, spectrographCamera);
+            }
+            
+            // Handle window resize for spectrograph
+            function onSpectrographResize() {
+                if (spectrographCamera && spectrographRenderer) {
+                    spectrographCamera.aspect = window.innerWidth / window.innerHeight;
+                    spectrographCamera.updateProjectionMatrix();
+                    spectrographRenderer.setSize(window.innerWidth, window.innerHeight);
+                }
+            }
+            
+            // Close the spectrograph overlay
+            function closeSpectrograph() {
+                const spectrographOverlay = document.getElementById('spectrographOverlay');
+                spectrographOverlay.style.display = 'none';
+                
+                if (animationFrameId) {
+                    cancelAnimationFrame(animationFrameId);
+                    animationFrameId = null;
+                }
+                
+                window.removeEventListener('resize', onSpectrographResize);
+            }
+            
+            // Function to get CSRF token from cookies
+            function getCookie(name) {
+                let cookieValue = null;
+                if (document.cookie && document.cookie !== '') {
+                    const cookies = document.cookie.split(';');
+                    for (let i = 0; i < cookies.length; i++) {
+                        const cookie = cookies[i].trim();
+                        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                            break;
+                        }
+                    }
+                }
+                return cookieValue;
+            }
+            
+            // Add animation effects for prompt fields
+            [initialPromptField, bottomPromptField].forEach(field => {
+                field.addEventListener('focus', function() {
+                    this.style.borderColor = 'rgba(138, 43, 226, 0.8)';
+                    this.style.boxShadow = '0 0 0 3px rgba(138, 43, 226, 0.25)';
+                });
+                
+                field.addEventListener('blur', function() {
+                    this.style.borderColor = 'rgba(138, 43, 226, 0.4)';
+                    this.style.boxShadow = '0 5px 15px rgba(0, 0, 0, 0.2)';
+                });
+            });
+            
+            // Add hover effects for buttons
+            const buttons = document.querySelectorAll('.send-btn, .voice-btn');
+            buttons.forEach(button => {
+                button.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-2px)';
+                });
+                
+                button.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0)';
+                });
+            });
+        });
+    </script>
+    
+    <!-- Markdown and Code Highlighting Libraries -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-css.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-html.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-json.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/toolbar/prism-toolbar.min.js"></script>
+    
+    <script>
+        // Configure marked.js for code highlighting
+        document.addEventListener('DOMContentLoaded', function() {
+            if (typeof marked !== 'undefined') {
+                marked.setOptions({
+                    highlight: function(code, lang) {
+                        if (Prism && Prism.languages[lang]) {
+                            return Prism.highlight(code, Prism.languages[lang], lang);
+                        }
+                        return code;
+                    },
+                    breaks: true,  // Enable GitHub-style line breaks
+                    gfm: true,     // Enable GitHub Flavored Markdown
+                    pedantic: false,
+                    smartLists: true,
+                    smartypants: false
+                });
+            }
+        });
+    </script>
+</body>
+</html>

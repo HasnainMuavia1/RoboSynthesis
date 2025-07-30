@@ -1,0 +1,93 @@
+{
+    "design_system": {
+      "style": {
+        "overall_theme": "Modern, minimalist, gradient background",
+        "background": {
+          "gradient": {
+            "start_color": "#0e1f2d",
+            "end_color": "#ff4b57"
+          },
+          "texture": "Subtle grainy texture, smooth transition between colors"
+        },
+        "typography": {
+          "font_family": "Sans-serif",
+          "font_weight": "Bold for headings, Regular for body text",
+          "font_size": {
+            "heading": "48px",
+            "body": "16px"
+          },
+          "line_height": "1.5",
+          "letter_spacing": "0.5px"
+        },
+        "color_palette": {
+          "primary_color": "#ffffff",
+          "secondary_color": "#ff007f",
+          "accent_color": "#00b2ff",
+          "text_color": "#ffffff",
+          "button_color": "#292929"
+        },
+        "button_style": {
+          "shape": "Rounded corners",
+          "background_color": "#292929",
+          "hover_effect": "Slight increase in shadow intensity, subtle scale effect",
+          "text_color": "#ffffff",
+          "icon": "Microphone icon (for voice input)",
+          "size": "Medium",
+          "position": "Inside input field, on the right side"
+        },
+        "input_field": {
+          "border_radius": "12px",
+          "background_color": "#1a1a1a",
+          "text_color": "#ffffff",
+          "padding": "10px",
+          "border": "None",
+          "icon_alignment": "Right-aligned voice button"
+        },
+        "layout": {
+          "container": {
+            "width": "100%",
+            "padding": "20px",
+            "max_width": "1200px",
+            "centered": "Yes"
+          },
+          "header": {
+            "position": "Top",
+            "alignment": "Centered",
+            "padding_bottom": "20px"
+          },
+          "footer": {
+            "visibility": "Hidden",
+            "spacing": "None"
+          }
+        },
+        "interaction": {
+          "focus_effect": "Subtle glow on input field when focused",
+          "hover_effect": "Button scales up slightly with shadow effect",
+          "voice_mode_button": {
+            "icon_color": "#ffffff",
+            "icon_size": "small",
+            "click_functionality": "Activates voice input mode"
+          }
+        }
+      },
+      "structure": {
+        "header": {
+          "text": "Build something Lovable",
+          "subtext": "Create apps and websites by chatting with AI",
+          "alignment": "Center"
+        },
+        "input_area": {
+          "type": "Text input field",
+          "placeholder": "Ask Lovable to create",
+          "action_button": "Public button to trigger submission",
+          "voice_mode_button": "Microphone icon for voice input",
+          "input_field_style": {
+            "width": "80%",
+            "alignment": "Center",
+            "shape": "Rounded edges"
+          }
+        }
+      }
+    }
+  }
+  

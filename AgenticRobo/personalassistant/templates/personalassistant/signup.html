@@ -1,0 +1,293 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up - Character Synthesis</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Animate.css -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    
+    <!-- AOS CSS -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{% static 'personalassistant/css/signup.css' %}">
+    <link rel="stylesheet" href="{% static 'personalassistant/css/signup.css' %}">
+
+    <style>
+        /* Essential inline styles for the signup page */
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Poppins', sans-serif;
+            background: #121212;
+            color: #ffffff;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+        
+        /* Logo animations */
+        @keyframes slide-right {
+            0%, 100% { width: 0; left: 0; }
+            50% { width: 100%; left: 0; }
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        
+        @keyframes glow {
+            0% { opacity: 0.5; }
+            100% { opacity: 0.9; }
+        }
+
+        /* Fallback styles in case the external CSS doesn't load */
+        .signup-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            width: 100%;
+            background: linear-gradient(135deg, #121212 0%, #1a1a2e 100%);
+            position: relative;
+            overflow: hidden;
+            perspective: 1000px;
+            padding: 2rem;
+        }
+
+        .blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(60px);
+            opacity: 0.4;
+            background: radial-gradient(circle, #8a2be2 0%, transparent 70%);
+            z-index: -1;
+            animation: float 20s infinite ease-in-out;
+        }
+
+        .blob-1 {
+            width: 500px;
+            height: 500px;
+            top: -100px;
+            left: -100px;
+        }
+
+        .blob-2 {
+            width: 400px;
+            height: 400px;
+            bottom: -100px;
+            right: -100px;
+            background: radial-gradient(circle, #00ffff 0%, transparent 70%);
+        }
+
+        .blob-3 {
+            width: 300px;
+            height: 300px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: radial-gradient(circle, #ff00ff 0%, transparent 70%);
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .navbar {
+            background-color: rgba(18, 18, 18, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .logo-text {
+            font-weight: 800;
+            color: #ffffff;
+            display: inline-block;
+        }
+
+        .logo-text span {
+            display: inline-block;
+            animation: float 3s ease-in-out infinite;
+            animation-delay: calc(0.1s * var(--i));
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'personalassistant:home' %}" style="position: relative; display: flex; align-items: center;">
+                <div style="position: relative; overflow: hidden;">
+                    <!-- White Logo Text -->
+                    <span style="font-size: 1.5rem; font-weight: 800; color: #ffffff; letter-spacing: -0.5px; position: relative; z-index: 2; display: flex; align-items: center;">
+                        <span style="position: relative; display: inline-block; overflow: hidden;">
+                            Character
+                        </span>
+                        <span style="display: inline-block; margin: 0 5px; position: relative;">
+                            <i class="fas fa-robot" style="color: #8a2be2; font-size: 1.2rem;"></i>
+                            <span style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle at center, rgba(138, 43, 226, 0.6), transparent 70%); filter: blur(8px); opacity: 0.7;"></span>
+                        </span>
+                        <span style="position: relative; display: inline-block; overflow: hidden;">
+                            Synthesis
+                        </span>
+                    </span>
+                </div>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'personalassistant:home' %}" style="position: relative; color: #ffffff; font-weight: 500; padding: 0.5rem 1rem;">
+                            Home
+                            <span class="nav-hover-effect" style="position: absolute; bottom: 0; left: 10%; width: 0; height: 2px; background: linear-gradient(90deg, transparent, #8a2be2, transparent); transition: width 0.3s ease;"></span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="{% url 'personalassistant:signup' %}" style="position: relative; color: #ffffff; font-weight: 500; padding: 0.5rem 1rem;">
+                            Sign Up
+                            <span class="nav-hover-effect" style="position: absolute; bottom: 0; left: 10%; width: 80%; height: 2px; background: linear-gradient(90deg, transparent, #8a2be2, transparent); transition: width 0.3s ease;"></span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="btn btn-outline-light ms-2" href="{% url 'personalassistant:login' %}" style="border-color: #8a2be2; color: #ffffff; background: rgba(138, 43, 226, 0.1); box-shadow: 0 0 10px rgba(138, 43, 226, 0.3);">
+                            Login
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Signup Container -->
+    <div class="signup-container">
+        <!-- 3D Animated Background Elements -->
+        <div class="background-elements">
+            <div class="blob blob-1"></div>
+            <div class="blob blob-2"></div>
+            <div class="blob blob-3"></div>
+            <div class="grid-overlay"></div>
+            <div class="particles-container">
+                {% for i in "12345678910" %}
+                <div class="particle particle-{{ forloop.counter }}"></div>
+                {% endfor %}
+            </div>
+        </div>
+        
+        <div class="container d-flex justify-content-center align-items-center" style="min-height: 100vh; padding-top: 80px; padding-bottom: 40px;">
+
+        <div class="signup-wrapper">
+            <!-- Left side with robot image -->
+            <div class="signup-image-container">
+                <div class="image-wrapper">
+                    <img src="{% static 'personalassistant/images/pages.png' %}" alt="Character Synthesis" class="signup-robot">
+                    <div class="glow-effect"></div>
+                    <div class="floating-elements">
+                        <div class="floating-circle circle-1"></div>
+                        <div class="floating-circle circle-2"></div>
+                        <div class="floating-square"></div>
+                        <div class="floating-triangle"></div>
+                    </div>
+                </div>
+                <div class="image-reflection"></div>
+            </div>
+
+            <!-- Right side with form -->
+            <div class="signup-form-container">
+                <div class="form-header">
+                    <h2 class="signup-title">
+                        <span class="title-layer">Join Character Synthesis</span>
+                        <span class="title-layer">Join Character Synthesis</span>
+                        <span class="title-layer">Join Character Synthesis</span>
+                    </h2>
+                    <p class="signup-subtitle">Create your account to get started</p>
+                </div>
+
+                <div class="form-wrapper">
+                    <form method="post" class="signup-form">
+                        {% csrf_token %}
+                        
+                        <div class="form-group custom-input-group">
+                            <div class="input-wrapper">
+                                <span class="input-icon"><i class="fas fa-user-astronaut"></i></span>
+                                <input type="text" name="username" id="id_username" placeholder=" " class="form-input" required>
+                                <label for="id_username" class="floating-label">Username</label>
+                            </div>
+                            {% if form.username.errors %}
+                                <div class="error-message">{{ form.username.errors }}</div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="form-group custom-input-group">
+                            <div class="input-wrapper">
+                                <span class="input-icon"><i class="fas fa-shield-alt"></i></span>
+                                <input type="password" name="password1" id="id_password1" placeholder=" " class="form-input" required>
+                                <label for="id_password1" class="floating-label">Password</label>
+                            </div>
+                            {% if form.password1.errors %}
+                                <div class="error-message">{{ form.password1.errors }}</div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="form-group custom-input-group">
+                            <div class="input-wrapper">
+                                <span class="input-icon"><i class="fas fa-key"></i></span>
+                                <input type="password" name="password2" id="id_password2" placeholder=" " class="form-input" required>
+                                <label for="id_password2" class="floating-label">Confirm Password</label>
+                            </div>
+                            {% if form.password2.errors %}
+                                <div class="error-message">{{ form.password2.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        {% if form.non_field_errors %}
+                            <div class="non-field-errors">
+                                {% for error in form.non_field_errors %}
+                                    <p class="error-message">{{ error }}</p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+
+                        <div class="form-actions">
+                            <button type="submit" class="signup-btn">
+                                <span class="btn-text">Sign Up</span>
+                                <span class="btn-glow"></span>
+                            </button>
+                        </div>
+
+                        <div class="form-footer">
+                            <p>Already have an account? <a href="{% url 'personalassistant:login' %}" class="login-link">Log In</a></p>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+        </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- AOS JS -->
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+    
+    <!-- Custom JS -->
+    <script src="{% static 'personalassistant/js/signup.js' %}"></script>
+</body>
+</html>

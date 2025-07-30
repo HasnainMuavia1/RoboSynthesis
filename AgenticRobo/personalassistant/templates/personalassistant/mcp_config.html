@@ -1,0 +1,504 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MCP Config - Character Synthesis</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Animate.css -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    
+    <!-- AOS CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{% static 'personalassistant/css/style.css' %}">
+    
+    <!-- MCP Config-specific CSS -->
+    <style>
+        html {
+            height: 100%;
+        }
+        
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #0a0a14, #1a1a2e, #16213e, #0a0a14) fixed;
+            background-size: 400% 400%;
+            animation: gradient-bg 15s ease infinite;
+            color: #ffffff;
+            overflow-x: hidden;
+            min-height: 100vh;
+            position: relative;
+        }
+        
+        /* Add a pseudo-element to ensure background covers everything */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: inherit;
+            z-index: -1;
+        }
+        
+        @keyframes gradient-bg {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        .navbar {
+            background-color: rgba(18, 18, 18, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .dashboard-container {
+            padding-top: 100px;
+            padding-bottom: 50px;
+            min-height: calc(100vh - 80px);
+        }
+        
+        .section-title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            color: #ffffff;
+            position: relative;
+            display: inline-block;
+        }
+        
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 60px;
+            height: 4px;
+            background: linear-gradient(90deg, #8a2be2, #9932cc);
+            border-radius: 2px;
+        }
+        
+        .mcp-card {
+            background: rgba(30, 30, 30, 0.5);
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(138, 43, 226, 0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            height: 100%;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            margin-bottom: 20px;
+        }
+        
+        .mcp-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(138, 43, 226, 0.3);
+        }
+        
+        .mcp-icon {
+            width: 60px;
+            height: 60px;
+            object-fit: contain;
+            margin-bottom: 15px;
+            filter: drop-shadow(0 0 5px rgba(138, 43, 226, 0.5));
+            transition: transform 0.3s ease;
+        }
+        
+        .mcp-card:hover .mcp-icon {
+            transform: scale(1.1);
+        }
+        
+        .connect-btn {
+            background: rgba(138, 43, 226, 0.8);
+            color: white;
+            border-radius: 30px;
+            padding: 10px 25px;
+            transition: all 0.3s ease;
+            border: none;
+        }
+        
+        .connect-btn:hover {
+            background: rgba(138, 43, 226, 1);
+            box-shadow: 0 0 15px rgba(138, 43, 226, 0.5);
+        }
+        
+        .status-badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+        
+        .status-connected {
+            background-color: rgba(40, 167, 69, 0.2);
+            color: #28a745;
+            border: 1px solid rgba(40, 167, 69, 0.3);
+        }
+        
+        .status-disconnected {
+            background-color: rgba(220, 53, 69, 0.2);
+            color: #dc3545;
+            border: 1px solid rgba(220, 53, 69, 0.3);
+        }
+        
+        /* Modal styles */
+        .modal-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 1040;
+        }
+        
+        .mcp-modal {
+            z-index: 1050;
+        }
+        
+        .mcp-modal .modal-dialog {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) !important;
+            max-width: 500px;
+            width: 90%;
+            margin: 0;
+        }
+        
+        .mcp-modal .modal-content {
+            background: rgba(30, 30, 30, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(138, 43, 226, 0.3);
+            color: #ffffff;
+            max-height: 80vh;
+            overflow-y: auto;
+            position: relative;
+            z-index: 1055;
+            border-radius: 15px;
+        }
+        
+        .mcp-modal .modal-header {
+            border-color: rgba(138, 43, 226, 0.2) !important;
+        }
+        
+        .mcp-modal .modal-footer {
+            border-color: rgba(138, 43, 226, 0.2) !important;
+        }
+        
+        .mcp-modal .form-control {
+            background: rgba(50, 50, 50, 0.5);
+            border: 1px solid rgba(138, 43, 226, 0.2);
+            color: #ffffff;
+            position: relative;
+            z-index: 1060;
+        }
+        
+        .mcp-modal .form-text {
+            color: rgba(255, 255, 255, 0.7);
+        }
+        
+        /* Success animation */
+        @keyframes checkmark {
+            0% { transform: scale(0); opacity: 0; }
+            50% { transform: scale(1.2); opacity: 1; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        
+        .success-animation {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 0;
+        }
+        
+        .success-checkmark {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: rgba(40, 167, 69, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1rem;
+        }
+        
+        .success-checkmark i {
+            color: #28a745;
+            font-size: 40px;
+            animation: checkmark 0.5s ease-in-out;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+        <div class="container">
+            <!-- Animated Logo -->
+            <a class="navbar-brand" href="#" style="position: relative; display: flex; align-items: center;">
+                <div class="animated-logo" style="position: relative; overflow: hidden;">
+                    <!-- White Logo Text -->
+                    <span style="font-size: 1.5rem; font-weight: 800; color: #ffffff; letter-spacing: -0.5px; position: relative; z-index: 2; display: flex; align-items: center;">
+                        <span class="logo-text" style="position: relative; display: inline-block; overflow: hidden;">
+                            <span style="display: inline-block;">C</span><span style="display: inline-block;">h</span><span style="display: inline-block;">a</span><span style="display: inline-block;">r</span><span style="display: inline-block;">a</span><span style="display: inline-block;">c</span><span style="display: inline-block;">t</span><span style="display: inline-block;">e</span><span style="display: inline-block;">r</span>
+                        </span>
+                        <span class="logo-icon" style="display: inline-block; margin: 0 5px; position: relative;">
+                            <i class="fas fa-robot" style="color: #8a2be2; font-size: 1.2rem; animation: pulse 2s infinite;"></i>
+                            <span style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle at center, rgba(138, 43, 226, 0.6), transparent 70%); filter: blur(8px); opacity: 0.7; animation: glow 2s infinite alternate;"></span>
+                        </span>
+                        <span class="logo-text" style="position: relative; display: inline-block; overflow: hidden;">
+                            <span style="display: inline-block;">S</span><span style="display: inline-block;">y</span><span style="display: inline-block;">n</span><span style="display: inline-block;">t</span><span style="display: inline-block;">h</span><span style="display: inline-block;">e</span><span style="display: inline-block;">s</span><span style="display: inline-block;">i</span><span style="display: inline-block;">s</span>
+                        </span>
+                    </span>
+                    
+                    <!-- Animated Underline -->
+                    <span class="logo-underline" style="position: absolute; bottom: -2px; left: 0; width: 0; height: 2px; background: linear-gradient(90deg, transparent, #ffffff, transparent); animation: slide-right 3s infinite;"></span>
+                </div>
+            </a>
+            
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <!-- Dashboard Navigation Items -->
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'personalassistant:dashboard' %}">
+                            <i class="fas fa-tachometer-alt me-1"></i> Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'personalassistant:agento_assistant' %}">
+                            <i class="fas fa-robot me-1"></i> Agento Assistant
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'personalassistant:ai_tutor' %}">
+                            <i class="fas fa-graduation-cap me-1"></i> AI Tutor
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="{% url 'personalassistant:mcp_config' %}">
+                            <i class="fas fa-cogs me-1"></i> MCP Config
+                        </a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-user-circle me-1"></i> {{ user.username }}
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="navbarDropdown" style="background-color: rgba(30, 30, 30, 0.95); backdrop-filter: blur(10px); border: 1px solid rgba(138, 43, 226, 0.2);">
+                            <li><a class="dropdown-item text-light" href="{% url 'personalassistant:profile' %}"><i class="fas fa-id-card me-2"></i> Profile</a></li>
+                            <li><hr class="dropdown-divider" style="border-color: rgba(138, 43, 226, 0.2);"></li>
+                            <li><a class="dropdown-item text-light" href="{% url 'personalassistant:logout' %}"><i class="fas fa-sign-out-alt me-2"></i> Logout</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- Main MCP Config Container -->
+    <div class="dashboard-container">
+        <div class="container">
+            <div class="row mb-4">
+                <div class="col-12 text-center">
+                    <h2 class="section-title">MCP Configuration</h2>
+                    <p class="text-light mb-5">Connect your AI assistant to external services</p>
+                </div>
+            </div>
+            
+            <!-- MCP Server Cards - Only Google Apps and GitHub -->
+            <div class="row justify-content-center">
+                <!-- Google Apps Card -->
+                <div class="col-md-6 col-lg-5 mb-4">
+                    <div class="card mcp-card position-relative" data-service="google">
+                        <span class="status-badge status-disconnected">Disconnected</span>
+                        <div class="card-body text-center p-4">
+                            <div class="mcp-icon d-flex align-items-center justify-content-center" style="margin: 0 auto; background: rgba(138, 43, 226, 0.2); border-radius: 50%; width: 80px; height: 80px;">
+                                <i class="fab fa-google" style="font-size: 40px; color: #8a2be2;"></i>
+                            </div>
+                            <h4 class="card-title text-white mb-3">Google Apps</h4>
+                            <p class="card-text text-light mb-4">Connect to Google services including Gmail, Drive, and Calendar.</p>
+                            <button class="btn connect-btn" data-service="google">
+                                <i class="fas fa-plug me-2"></i> Connect
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- GitHub Card -->
+                <div class="col-md-6 col-lg-5 mb-4">
+                    <div class="card mcp-card position-relative" data-service="github">
+                        <span class="status-badge status-disconnected">Disconnected</span>
+                        <div class="card-body text-center p-4">
+                            <div class="mcp-icon d-flex align-items-center justify-content-center" style="margin: 0 auto; background: rgba(138, 43, 226, 0.2); border-radius: 50%; width: 80px; height: 80px;">
+                                <i class="fab fa-github" style="font-size: 40px; color: #8a2be2;"></i>
+                            </div>
+                            <h4 class="card-title text-white mb-3">GitHub</h4>
+                            <p class="card-text text-light mb-4">Connect to GitHub for repository access and management.</p>
+                            <button class="btn connect-btn" data-service="github">
+                                <i class="fas fa-plug me-2"></i> Connect
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Configuration Info -->
+            <div class="row mt-5 mb-4">
+                <div class="col-12">
+                    <div class="card" style="background: rgba(30, 30, 30, 0.5); border-radius: 15px; backdrop-filter: blur(10px); border: 1px solid rgba(138, 43, 226, 0.2);">
+                        <div class="card-body p-4">
+                            <h3 class="text-white mb-4">MCP Connection Information</h3>
+                            
+                            <div class="mb-4">
+                                <h5 class="text-light">Google Apps</h5>
+                                <p class="text-light">
+                                    <i class="fas fa-info-circle me-2 text-info"></i>
+                                    Upload your Google API credentials file (.json) to connect to Google services. The file will be stored securely in the credentials folder.
+                                </p>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <h5 class="text-light">GitHub</h5>
+                                <p class="text-light">
+                                    <i class="fas fa-info-circle me-2 text-info"></i>
+                                    Enter your GitHub Personal Access Token to connect to GitHub services. The token will be stored securely in the .env file.
+                                </p>
+                            </div>
+                            
+                            <div class="alert alert-warning" role="alert">
+                                <i class="fas fa-exclamation-triangle me-2"></i>
+                                <strong>Security Notice:</strong> Your credentials are stored locally and are never shared with third parties.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Google Apps Modal -->
+    <div class="modal fade mcp-modal" id="googleModal" tabindex="-1" aria-labelledby="googleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header border-bottom">
+                    <h5 class="modal-title" id="googleModalLabel">Connect to Google Apps</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="googleConnectForm" enctype="multipart/form-data" method="post" action="{% url 'personalassistant:upload_mcp_config' %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="service_name" value="google">
+                        
+                        <div class="mb-4">
+                            <div class="alert alert-info">
+                                <i class="fas fa-info-circle me-2"></i>
+                                Please upload your Google API credentials file. This file will be saved to the credentials folder.
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="googleConfigFile" class="form-label">Google API Credentials File</label>
+                            <input type="file" class="form-control" name="config_file" id="googleConfigFile" accept=".json" required>
+                            <div class="form-text">Upload the JSON credentials file from Google Cloud Console.</div>
+                        </div>
+                        
+                        <div id="googleUploadSuccess" class="success-animation" style="display: none;">
+                            <div class="success-checkmark">
+                                <i class="fas fa-check"></i>
+                            </div>
+                            <h5 class="text-center">Successfully Connected!</h5>
+                            <p class="text-center">Your Google API credentials have been saved.</p>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer border-top">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn connect-btn" id="submitGoogleConnection">
+                        <i class="fas fa-plug me-2"></i> Connect
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- GitHub Modal -->
+    <div class="modal fade mcp-modal" id="githubModal" tabindex="-1" aria-labelledby="githubModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header border-bottom">
+                    <h5 class="modal-title" id="githubModalLabel">Connect to GitHub</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="githubConnectForm" method="post" action="{% url 'personalassistant:save_github_token' %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="service_name" value="github">
+                        
+                        <div class="mb-4">
+                            <div class="alert alert-info">
+                                <i class="fas fa-info-circle me-2"></i>
+                                Please enter your GitHub Personal Access Token. This token will be saved to the .env file.
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="githubToken" class="form-label">Personal Access Token</label>
+                            <input type="password" class="form-control" name="github_token" id="githubToken" required>
+                            <div class="form-text">Enter your GitHub Personal Access Token with appropriate permissions.</div>
+                        </div>
+                        
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="showToken">
+                            <label class="form-check-label" for="showToken">Show token</label>
+                        </div>
+                        
+                        <div id="githubSuccess" class="success-animation" style="display: none;">
+                            <div class="success-checkmark">
+                                <i class="fas fa-check"></i>
+                            </div>
+                            <h5 class="text-center">Successfully Connected!</h5>
+                            <p class="text-center">Your GitHub token has been saved to the .env file.</p>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer border-top">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn connect-btn" id="submitGithubConnection">
+                        <i class="fas fa-plug me-2"></i> Connect
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS and other scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+    <script>
+        AOS.init();
+    </script>
+    <!-- Custom MCP Config JavaScript -->
+    <script src="{% static 'personalassistant/js/mcp_config.js' %}"></script>
+</body>
+</html>

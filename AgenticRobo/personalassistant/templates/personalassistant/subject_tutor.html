@@ -1,0 +1,571 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Subject Tutor</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Animate.css -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    
+    <!-- AOS CSS -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    
+    <!-- Prism CSS for code highlighting -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-okaidia.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/toolbar/prism-toolbar.min.css" rel="stylesheet">
+    
+    <!-- Marked.js for markdown parsing -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{% static 'personalassistant/css/signup.css' %}">
+    
+    <style>
+        /* Essential inline styles */
+        html {
+            height: 100%;
+        }
+        
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #0a0a14, #1a1a2e, #16213e, #0a0a14) fixed;
+            background-size: 400% 400%;
+            animation: gradient-bg 15s ease infinite;
+            color: #ffffff;
+            overflow-x: hidden;
+            min-height: 100vh;
+            position: relative;
+            padding-bottom: 80px; /* Space for fixed bottom input */
+        }
+        
+        /* Add a pseudo-element to ensure background covers everything */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: inherit;
+            z-index: -1;
+        }
+        
+        /* Hero section styles */
+        .hero-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 50vh;
+            text-align: center;
+            padding: 2rem 1rem;
+            transition: all 0.5s ease;
+        }
+        
+        /* Chat container styles */
+        .chat-container {
+            width: 100%;
+            max-width: 100%;
+            margin: 0 auto;
+            background: rgba(20, 20, 40, 0.4);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            min-height: 60vh;
+            max-height: calc(100vh - 180px);
+            overflow-y: auto;
+            transition: all 0.5s ease;
+        }
+        
+        /* Bottom input container */
+        .bottom-input-container {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(26, 26, 46, 0.9);
+            backdrop-filter: blur(10px);
+            padding: 15px;
+            border-top: 1px solid rgba(138, 43, 226, 0.2);
+            z-index: 1000;
+        }
+        
+        .prompt-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .prompt-field {
+            flex: 1;
+            background: rgba(30, 30, 60, 0.5);
+            border: 1px solid rgba(138, 43, 226, 0.3);
+            border-radius: 30px;
+            padding: 12px 50px 12px 20px;
+            color: #ffffff;
+            font-size: 16px;
+            resize: none;
+            height: 50px;
+            max-height: 120px;
+            overflow-y: auto;
+        }
+        
+        .prompt-actions {
+            position: absolute;
+            right: 15px;
+            display: flex;
+            align-items: center;
+        }
+        
+        /* Hide hero section after first query */
+        .hidden {
+            display: none !important;
+        }
+        
+        @keyframes gradient-bg {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        /* Responsive styles */
+        @media (max-width: 768px) {
+            .assistant-title {
+                font-size: 2rem;
+            }
+            
+            .assistant-subtitle {
+                font-size: 0.9rem;
+            }
+            
+            .prompt-wrapper {
+                margin-bottom: 1rem;
+            }
+            
+            .chat-container {
+                padding: 10px;
+            }
+            
+            .message-content {
+                padding: 10px;
+            }
+            
+            .initial-prompt-container {
+                padding: 15px;
+            }
+            
+            .bottom-input-container {
+                padding-left: 10px;
+                padding-right: 10px;
+            }
+            
+            #bottomInputContainer {
+                padding: 10px 0;
+            }
+            
+            .prompt-actions {
+                right: 5px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg fixed-top" style="background: rgba(26, 26, 46, 0.8); backdrop-filter: blur(10px); border-bottom: 1px solid rgba(138, 43, 226, 0.2);">
+        <div class="container">
+            <!-- Brand Logo -->
+            <a class="navbar-brand" href="{% url 'personalassistant:dashboard' %}" style="font-weight: 700; color: #ffffff;">
+                <span class="me-1" style="color: #8a2be2;"><i class="fas fa-robot"></i></span>
+                <span class="brand-text" style="color: #8a2be2;">Robo</span>Synthesis
+            </a>
+            
+            <!-- Navbar Toggler -->
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <!-- Navbar Links -->
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <!-- Dashboard Navigation Items -->
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'personalassistant:dashboard' %}" style="color: #ffffff; position: relative;">
+                            <i class="fas fa-home me-1"></i> Dashboard
+                            <span class="nav-hover-effect" style="position: absolute; bottom: 0; left: 50%; width: 0; height: 2px; background: #8a2be2; transform: translateX(-50%); transition: width 0.3s ease;"></span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'personalassistant:ai_tutor' %}" style="color: #ffffff; position: relative;">
+                            <i class="fas fa-graduation-cap me-1"></i> AI Tutor
+                            <span class="nav-hover-effect" style="position: absolute; bottom: 0; left: 50%; width: 0; height: 2px; background: #8a2be2; transform: translateX(-50%); transition: width 0.3s ease;"></span>
+                        </a>
+                    </li>
+                    
+                    <!-- User Dropdown -->
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="color: #ffffff; position: relative;">
+                            <i class="fas fa-user-circle me-1"></i> {{ request.user.username }}
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown" style="background: rgba(26, 26, 46, 0.9); backdrop-filter: blur(10px); border: 1px solid rgba(138, 43, 226, 0.2);">
+                            <li><a class="dropdown-item" href="{% url 'personalassistant:profile' %}" style="color: #ffffff;"><i class="fas fa-id-card me-2"></i> Profile</a></li>
+                            <li><a class="dropdown-item" href="{% url 'personalassistant:logout' %}" style="color: #ffffff;"><i class="fas fa-sign-out-alt me-2"></i> Logout</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <!-- Context Button (Top Right) -->
+    <div style="position: fixed; top: 80px; right: 20px; z-index: 100;">
+        <button id="contextButton" class="btn btn-outline-light" style="border-color: rgba(138, 43, 226, 0.6); color: #8a2be2;">
+            <i class="fas fa-file-upload me-2"></i> Context
+        </button>
+    </div>
+    
+    <!-- Main Content -->
+    <div style="margin-top: 100px; padding-bottom: 80px;">
+        <!-- Hero Section (will be hidden after first query) -->
+        <div id="heroSection" class="hero-section" style="display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 40vh; text-align: center; padding: 2rem 1rem; margin-bottom: 2rem;">
+            <!-- Subject Title -->
+            <h1 class="assistant-title" style="font-family: 'Orbitron', sans-serif; font-weight: 700; background: linear-gradient(135deg, #8a2be2, #00ffff); -webkit-background-clip: text; background-clip: text; color: transparent; margin-bottom: 0.5rem;">
+                <span id="subjectTitle">{{ subject_name }}</span> Tutor
+            </h1>
+            <p class="assistant-subtitle" style="color: rgba(255, 255, 255, 0.7); font-size: 1.1rem;">
+                Your personalized AI learning assistant
+            </p>
+        </div>
+        
+        <!-- Chat Messages (directly on viewport) -->
+        <div id="chatMessages" class="chat-messages" style="width: 100%; min-height: 60vh; padding: 20px;">
+            <!-- Empty chat area - no default message -->
+        </div>
+    </div>
+    
+    <!-- Fixed Bottom Input Area -->
+    <div class="bottom-input-container" style="position: fixed; bottom: 0; left: 0; width: 100%; background: rgba(26, 26, 46, 0.9); backdrop-filter: blur(10px); padding: 15px; border-top: 1px solid rgba(138, 43, 226, 0.2); z-index: 1000;">
+        <div class="prompt-wrapper" style="position: relative; max-width: 1200px; margin: 0 auto; border-radius: 15px; padding: 2px; background: linear-gradient(135deg, rgba(138, 43, 226, 0.4), rgba(0, 255, 255, 0.4)); animation: gradient-border 3s ease infinite;">
+            <textarea id="promptField" class="form-control prompt-field" placeholder="Ask your question here..." style="background: rgba(20, 20, 40, 0.8) !important; border: none !important; color: #ffffff; border-radius: 15px; padding: 15px 50px 15px 15px; resize: none; height: 60px; transition: height 0.3s ease;"></textarea>
+            <div class="prompt-actions" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); display: flex; gap: 10px;">
+                <button id="sendButton" class="action-btn send-btn" style="width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: rgba(20, 20, 40, 0.7); border: 1px solid rgba(138, 43, 226, 0.4); color: #8a2be2; transition: all 0.3s ease;">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Context Modal -->
+    <div class="modal fade" id="contextModal" tabindex="-1" aria-labelledby="contextModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content" style="background: rgba(20, 20, 40, 0.95); backdrop-filter: blur(10px); border: 1px solid rgba(138, 43, 226, 0.4); color: #ffffff;">
+                <div class="modal-header" style="border-bottom: 1px solid rgba(138, 43, 226, 0.4);">
+                    <h5 class="modal-title" id="contextModalLabel">Upload Context</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="contextForm" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <input type="hidden" id="subjectField" name="subject" value="{{ subject }}">
+                        
+                        <div class="mb-3">
+                            <label for="contextFile" class="form-label">Upload Context File</label>
+                            <input type="file" class="form-control" id="contextFile" name="context_file" accept=".pdf,.docx,.txt" style="background: rgba(30, 30, 60, 0.5); color: #ffffff; border: 1px solid rgba(138, 43, 226, 0.4);">
+                            <div class="form-text text-light">Supported formats: PDF, Word, Text</div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="contextText" class="form-label">Or Enter Context Text</label>
+                            <textarea class="form-control" id="contextText" name="context_text" rows="5" style="background: rgba(30, 30, 60, 0.5); color: #ffffff; border: 1px solid rgba(138, 43, 226, 0.4);"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer" style="border-top: 1px solid rgba(138, 43, 226, 0.4);">
+                    <button type="button" class="btn btn-outline-light" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" id="saveContextButton" class="btn" style="background: rgba(138, 43, 226, 0.8); color: white;">Save Context</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- AOS JS -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    
+    <script>
+        // Initialize AOS
+        AOS.init();
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize variables
+            const contextButton = document.getElementById('contextButton');
+            const contextModal = new bootstrap.Modal(document.getElementById('contextModal'));
+            const saveContextButton = document.getElementById('saveContextButton');
+            const promptField = document.getElementById('promptField');
+            const sendButton = document.getElementById('sendButton');
+            const chatMessages = document.getElementById('chatMessages');
+            
+            // Context button click handler
+            contextButton.addEventListener('click', function() {
+                contextModal.show();
+            });
+            
+            // Auto-resize textarea
+            promptField.addEventListener('input', function() {
+                this.style.height = 'auto';
+                this.style.height = (this.scrollHeight) + 'px';
+            });
+            
+            // Save context button click handler
+            saveContextButton.addEventListener('click', function() {
+                const contextForm = document.getElementById('contextForm');
+                const formData = new FormData(contextForm);
+                const fileInput = document.getElementById('contextFile');
+                const textInput = document.getElementById('contextText');
+                
+                // Check if either file or text is provided
+                if (fileInput.files.length === 0 && !textInput.value.trim()) {
+                    alert('Please provide either a file or text context.');
+                    return;
+                }
+                
+                // Show loading indicator
+                saveContextButton.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Saving...';
+                saveContextButton.disabled = true;
+                
+                // Send context data to server
+                fetch('/save_subject_context/', {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                    },
+                    // Important: Don't set Content-Type header when sending FormData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Close modal and show success message
+                        contextModal.hide();
+                        
+                        // Reset form
+                        contextForm.reset();
+                        
+                        // Add system message about context update
+                        addSystemMessage('Context updated successfully! I now have the information you provided to help with your questions.');
+                    } else {
+                        alert('Error: ' + (data.error || 'Unknown error'));
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred while saving context.');
+                })
+                .finally(() => {
+                    // Reset button state
+                    saveContextButton.innerHTML = 'Save Context';
+                    saveContextButton.disabled = false;
+                });
+            });
+            
+            // Send message function
+            function sendMessage() {
+                const message = promptField.value.trim();
+                if (message === '') return;
+                
+                // Add user message to chat
+                addUserMessage(message);
+                
+                // Clear input field
+                promptField.value = '';
+                promptField.style.height = '60px';
+                
+                // Hide hero section after first query
+                const heroSection = document.getElementById('heroSection');
+                if (heroSection) {
+                    heroSection.classList.add('hidden');
+                }
+                
+                // Adjust chat container to take full height after hero is hidden
+                const chatContainer = document.querySelector('.chat-container');
+                if (chatContainer) {
+                    chatContainer.style.minHeight = 'calc(100vh - 180px)';
+                }
+                
+                // Get CSRF token
+                const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+                
+                // Send message to server
+                fetch('/subject_message/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': csrftoken,
+                        'X-Requested-With': 'XMLHttpRequest',
+                    },
+                    body: JSON.stringify({
+                        message: message,
+                        subject: document.getElementById('subjectField').value
+                    })
+                })
+                .then(response => {
+                    // Check if response is SSE
+                    if (response.headers.get('content-type') === 'text/event-stream') {
+                        const reader = response.body.getReader();
+                        const decoder = new TextDecoder();
+                        
+                        // Create assistant message container
+                        const messageDiv = document.createElement('div');
+                        messageDiv.className = 'chat-message';
+                        messageDiv.style = 'display: flex; margin-bottom: 15px;';
+                        
+                        const contentDiv = document.createElement('div');
+                        contentDiv.className = 'message-content';
+                        contentDiv.style = 'max-width: 80%; padding: 15px; word-wrap: break-word; overflow-wrap: break-word;';
+                        
+                        const textDiv = document.createElement('div');
+                        textDiv.className = 'message-text';
+                        
+                        contentDiv.appendChild(textDiv);
+                        messageDiv.appendChild(contentDiv);
+                        chatMessages.appendChild(messageDiv);
+                        
+                        // Process the stream
+                        let fullResponse = '';
+                        
+                        function processStream() {
+                            reader.read().then(({ done, value }) => {
+                                if (done) return;
+                                
+                                const chunk = decoder.decode(value, { stream: true });
+                                const lines = chunk.split('\n');
+                                
+                                lines.forEach(line => {
+                                    if (line.startsWith('data: ')) {
+                                        try {
+                                            const data = JSON.parse(line.substring(6));
+                                            
+                                            if (data.content) {
+                                                fullResponse += data.content;
+                                                textDiv.innerHTML = marked.parse(fullResponse);
+                                                
+                                                // Scroll to bottom
+                                                scrollToBottom();
+                                                
+                                                // Apply syntax highlighting
+                                                if (typeof Prism !== 'undefined') {
+                                                    Prism.highlightAllUnder(textDiv);
+                                                }
+                                            }
+                                        } catch (e) {
+                                            console.error('Error parsing SSE data:', e);
+                                        }
+                                    }
+                                });
+                                
+                                processStream();
+                            });
+                        }
+                        
+                        processStream();
+                    } else {
+                        return response.json();
+                    }
+                })
+                .then(data => {
+                    if (data && data.error) {
+                        addSystemMessage('Error: ' + data.error);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    addSystemMessage('An error occurred while processing your request.');
+                });
+            }
+            
+            // Add user message to chat
+            function addUserMessage(message) {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = 'chat-message';
+                messageDiv.style = 'display: flex; justify-content: flex-end; margin-bottom: 15px;';
+                
+                const contentDiv = document.createElement('div');
+                contentDiv.className = 'message-content';
+                contentDiv.style = 'background: rgba(138, 43, 226, 0.3); border-radius: 15px; padding: 15px; border-top-right-radius: 5px; max-width: 80%; word-wrap: break-word; overflow-wrap: break-word;';
+                
+                const textDiv = document.createElement('div');
+                textDiv.className = 'message-text';
+                textDiv.textContent = message;
+                
+                contentDiv.appendChild(textDiv);
+                messageDiv.appendChild(contentDiv);
+                chatMessages.appendChild(messageDiv);
+                
+                // Scroll to bottom
+                scrollToBottom();
+            }
+            
+            // Add system message to chat
+            function addSystemMessage(message) {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = 'chat-message';
+                messageDiv.style = 'display: flex; margin-bottom: 15px;';
+                
+                const contentDiv = document.createElement('div');
+                contentDiv.className = 'message-content';
+                contentDiv.style = 'max-width: 80%; padding: 15px; word-wrap: break-word; overflow-wrap: break-word;';
+                
+                const textDiv = document.createElement('div');
+                textDiv.className = 'message-text';
+                textDiv.textContent = message;
+                
+                contentDiv.appendChild(textDiv);
+                messageDiv.appendChild(contentDiv);
+                chatMessages.appendChild(messageDiv);
+                
+                // Scroll to bottom
+                scrollToBottom();
+            }
+            
+            // Function to scroll chat to bottom
+            function scrollToBottom() {
+                window.scrollTo({
+                    top: document.body.scrollHeight,
+                    behavior: 'smooth'
+                });
+            }
+            
+            // Send button click handler
+            sendButton.addEventListener('click', sendMessage);
+            
+            // Enter key handler
+            promptField.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    sendMessage();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
